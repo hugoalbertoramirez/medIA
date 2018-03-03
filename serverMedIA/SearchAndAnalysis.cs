@@ -19,6 +19,8 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Configuration;
 
+using Model;
+
 namespace serverMedIA
 {
     public static class SearchAndAnalysis
@@ -46,13 +48,30 @@ namespace serverMedIA
 
             log.Info("function app working >>");
 
-            SearchNews();
+            using (DB_medIAEntities db = new DB_medIAEntities())
+            {
+                News news = new News();
+                Mention mention = new Mention();
+                News_Mention nm = new News_Mention();
 
-            ExtractOpinionsFromNews();
+                nm.Mention = mention;
+                nm.News = news;
 
-            ExtractKeyPhrasesFromNews();
+                news.News_Mention.Add(nm);
+                
 
-            SearchVideos();
+                
+            }
+            
+            
+
+            //SearchNews();
+
+            //ExtractOpinionsFromNews();
+
+            //ExtractKeyPhrasesFromNews();
+
+            //SearchVideos();
         }
 
         #region SQL objects

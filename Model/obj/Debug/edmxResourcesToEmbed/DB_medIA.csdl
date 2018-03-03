@@ -1,0 +1,1702 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="DB_medIAModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Client">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="registrationDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Groups" Relationship="Self.FK_Group_Client" FromRole="Client" ToRole="Group" />
+  </EntityType>
+  <EntityType Name="Consumption">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idGroup" Type="Int32" Nullable="false" />
+    <Property Name="idPlan" Type="Int32" Nullable="false" />
+    <Property Name="consumptionAzure" Type="Double" Nullable="false" />
+    <Property Name="startDate" Type="DateTime" Nullable="false" Precision="7" />
+    <Property Name="endDate" Type="DateTime" Nullable="false" Precision="7" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Group" Relationship="Self.FK_Consumption_Group" FromRole="Consumption" ToRole="Group" />
+    <NavigationProperty Name="Plan" Relationship="Self.FK_Consumption_Plan" FromRole="Consumption" ToRole="Plan" />
+  </EntityType>
+  <EntityType Name="Group">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idClient" Type="Int32" Nullable="false" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Client" Relationship="Self.FK_Group_Client" FromRole="Group" ToRole="Client" />
+    <NavigationProperty Name="Consumptions" Relationship="Self.FK_Consumption_Group" FromRole="Group" ToRole="Consumption" />
+    <NavigationProperty Name="Group_Term" Relationship="Self.FK_Group_Term_Group" FromRole="Group" ToRole="Group_Term" />
+    <NavigationProperty Name="Users" Relationship="Self.FK_User_Group" FromRole="Group" ToRole="User" />
+    <NavigationProperty Name="User_Video" Relationship="Self.FK_User_Video_Group" FromRole="Group" ToRole="User_Video" />
+  </EntityType>
+  <EntityType Name="License">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="idStatus" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Period">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="value" Type="Double" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Plans" Relationship="Self.FK_Plan_Period" FromRole="Period" ToRole="Plan" />
+  </EntityType>
+  <EntityType Name="Permission">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Role_Permission" Relationship="Self.FK_Role_Permission_Permission" FromRole="Permission" ToRole="Role_Permission" />
+  </EntityType>
+  <EntityType Name="Plan">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="price" Type="Double" Nullable="false" />
+    <Property Name="idPeriod" Type="Int32" Nullable="false" />
+    <Property Name="idLicense" Type="Int32" Nullable="false" />
+    <Property Name="idSector" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <Property Name="users" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Consumptions" Relationship="Self.FK_Consumption_Plan" FromRole="Plan" ToRole="Consumption" />
+    <NavigationProperty Name="Period" Relationship="Self.FK_Plan_Period" FromRole="Plan" ToRole="Period" />
+    <NavigationProperty Name="Plan_Product" Relationship="Self.FK_Plan_Product_Plan" FromRole="Plan" ToRole="Plan_Product" />
+    <NavigationProperty Name="Sector" Relationship="Self.FK_Plan_Sector" FromRole="Plan" ToRole="Sector" />
+  </EntityType>
+  <EntityType Name="Plan_Product">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idPlan" Type="Int32" Nullable="false" />
+    <Property Name="idProduct" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Plan" Relationship="Self.FK_Plan_Product_Plan" FromRole="Plan_Product" ToRole="Plan" />
+    <NavigationProperty Name="Product" Relationship="Self.FK_Plan_Product_Product" FromRole="Plan_Product" ToRole="Product" />
+  </EntityType>
+  <EntityType Name="Product">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="level" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="price" Type="Double" Nullable="false" />
+    <Property Name="transactionsAllowed" Type="Int32" Nullable="false" />
+    <Property Name="url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="urlDocumentation" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="expirationDate" Type="DateTime" Nullable="false" Precision="7" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Plan_Product" Relationship="Self.FK_Plan_Product_Product" FromRole="Product" ToRole="Plan_Product" />
+  </EntityType>
+  <EntityType Name="Role">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Role_Permission" Relationship="Self.FK_Role_Permission_Role" FromRole="Role" ToRole="Role_Permission" />
+    <NavigationProperty Name="Users" Relationship="Self.FK_User_Role" FromRole="Role" ToRole="User" />
+  </EntityType>
+  <EntityType Name="Role_Permission">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idRole" Type="Int32" Nullable="false" />
+    <Property Name="idPermission" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Permission" Relationship="Self.FK_Role_Permission_Permission" FromRole="Role_Permission" ToRole="Permission" />
+    <NavigationProperty Name="Role" Relationship="Self.FK_Role_Permission_Role" FromRole="Role_Permission" ToRole="Role" />
+  </EntityType>
+  <EntityType Name="Sector">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Plans" Relationship="Self.FK_Plan_Sector" FromRole="Sector" ToRole="Plan" />
+  </EntityType>
+  <EntityType Name="Status">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="value" Type="Int32" Nullable="false" />
+    <Property Name="status1" Type="Boolean" Nullable="false" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idGroup" Type="Int32" Nullable="false" />
+    <Property Name="idRole" Type="Int32" Nullable="false" />
+    <Property Name="user1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="lastName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="mLastName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="email" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="phone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <Property Name="ln_token" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="dtm_fecha_actualizacion" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="Group" Relationship="Self.FK_User_Group" FromRole="User" ToRole="Group" />
+    <NavigationProperty Name="Role" Relationship="Self.FK_User_Role" FromRole="User" ToRole="Role" />
+    <NavigationProperty Name="Favorite_News" Relationship="Self.FK_Favorite_News_User" FromRole="User" ToRole="Favorite_News" />
+    <NavigationProperty Name="Favorite_Video" Relationship="Self.FK_Favorite_Video_User" FromRole="User" ToRole="Favorite_Video" />
+  </EntityType>
+  <EntityType Name="Group_Term">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idGroup" Type="Int32" Nullable="false" />
+    <Property Name="idTerm" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Group" Relationship="Self.FK_Group_Term_Group" FromRole="Group_Term" ToRole="Group" />
+    <NavigationProperty Name="TermToSearch" Relationship="Self.FK_Group_Term_TermToSearch" FromRole="Group_Term" ToRole="TermToSearch" />
+  </EntityType>
+  <EntityType Name="KeyPhrase">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="News_KeyPhrase" Relationship="Self.FK_News_KeyPhrase_KeyPhrase" FromRole="KeyPhrase" ToRole="News_KeyPhrase" />
+    <NavigationProperty Name="Video_KeyPhrase" Relationship="Self.FK_Video_KeyPhrase_KeyPhrase" FromRole="KeyPhrase" ToRole="Video_KeyPhrase" />
+  </EntityType>
+  <EntityType Name="Opinion">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="score" Type="Double" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="News" Relationship="Self.FK_News_Opinion" FromRole="Opinion" ToRole="News" />
+    <NavigationProperty Name="Video_Opinion" Relationship="Self.FK_Video_Opinion_Opinion" FromRole="Opinion" ToRole="Video_Opinion" />
+  </EntityType>
+  <EntityType Name="OpinionLimit">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="limitSup" Type="Double" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Publisher">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="idType" Type="Int32" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="News_Publisher" Relationship="Self.FK_News_Publisher_Publisher" FromRole="Publisher" ToRole="News_Publisher" />
+    <NavigationProperty Name="PublisherType" Relationship="Self.FK_Publisher_PublisherType" FromRole="Publisher" ToRole="PublisherType" />
+    <NavigationProperty Name="Publisher_State" Relationship="Self.FK_Publisher_State_Publisher" FromRole="Publisher" ToRole="Publisher_State" />
+    <NavigationProperty Name="Videos" Relationship="Self.FK_Video_Publisher" FromRole="Publisher" ToRole="Video" />
+  </EntityType>
+  <EntityType Name="Publisher_State">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idPublisher" Type="Int32" Nullable="false" />
+    <Property Name="idState" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Publisher" Relationship="Self.FK_Publisher_State_Publisher" FromRole="Publisher_State" ToRole="Publisher" />
+    <NavigationProperty Name="State" Relationship="Self.FK_Publisher_State_State" FromRole="Publisher_State" ToRole="State" />
+  </EntityType>
+  <EntityType Name="PublisherType">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Publishers" Relationship="Self.FK_Publisher_PublisherType" FromRole="PublisherType" ToRole="Publisher" />
+  </EntityType>
+  <EntityType Name="State">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="initials" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="capital" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Publisher_State" Relationship="Self.FK_Publisher_State_State" FromRole="State" ToRole="Publisher_State" />
+  </EntityType>
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="TermToSearch">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="term" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Group_Term" Relationship="Self.FK_Group_Term_TermToSearch" FromRole="TermToSearch" ToRole="Group_Term" />
+    <NavigationProperty Name="News_TermToSearch" Relationship="Self.FK_News_TermToSearch_TermToSearch" FromRole="TermToSearch" ToRole="News_TermToSearch" />
+    <NavigationProperty Name="Video_TermToSearch" Relationship="Self.FK_Video_TermToSearch_TermToSearch" FromRole="TermToSearch" ToRole="Video_TermToSearch" />
+  </EntityType>
+  <EntityType Name="User_Video">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="idGroup" Type="Int32" Nullable="false" />
+    <Property Name="idVideo" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Group" Relationship="Self.FK_User_Video_Group" FromRole="User_Video" ToRole="Group" />
+    <NavigationProperty Name="Video" Relationship="Self.FK_User_Video_Video" FromRole="User_Video" ToRole="Video" />
+  </EntityType>
+  <EntityType Name="Video_TermToSearch">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idVideo" Type="Int32" Nullable="false" />
+    <Property Name="idTermToSearch" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="TermToSearch" Relationship="Self.FK_Video_TermToSearch_TermToSearch" FromRole="Video_TermToSearch" ToRole="TermToSearch" />
+    <NavigationProperty Name="Video" Relationship="Self.FK_Video_TermToSearch_Video" FromRole="Video_TermToSearch" ToRole="Video" />
+  </EntityType>
+  <EntityType Name="About">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="readLink" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="News_About" Relationship="Self.FK_News_About_About" FromRole="About" ToRole="News_About" />
+  </EntityType>
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="News" Relationship="Self.FK_News_Category" FromRole="Category" ToRole="News" />
+  </EntityType>
+  <EntityType Name="Favorite_News">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idNews" Type="Int32" Nullable="false" />
+    <Property Name="idUser" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="User" Relationship="Self.FK_Favorite_News_User" FromRole="Favorite_News" ToRole="User" />
+    <NavigationProperty Name="News" Relationship="Self.FK_Favorite_News_News" FromRole="Favorite_News" ToRole="News" />
+  </EntityType>
+  <EntityType Name="Image">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="contentUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="thumbnailContentUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="thumbnailWidth" Type="Int32" />
+    <Property Name="thumbnailHeight" Type="Int32" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <Property Name="idNews" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="News" Relationship="Self.FK_Image_News" FromRole="Image" ToRole="News" />
+  </EntityType>
+  <EntityType Name="Mention">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="News_Mention" Relationship="Self.FK_News_Mentions_Mentions" FromRole="Mention" ToRole="News_Mention" />
+  </EntityType>
+  <EntityType Name="News">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idCategory" Type="Int32" />
+    <Property Name="datePublished" Type="DateTime" Precision="3" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <Property Name="idOpinion" Type="Int32" />
+    <NavigationProperty Name="Opinion" Relationship="Self.FK_News_Opinion" FromRole="News" ToRole="Opinion" />
+    <NavigationProperty Name="Category" Relationship="Self.FK_News_Category" FromRole="News" ToRole="Category" />
+    <NavigationProperty Name="Favorite_News" Relationship="Self.FK_Favorite_News_News" FromRole="News" ToRole="Favorite_News" />
+    <NavigationProperty Name="Images" Relationship="Self.FK_Image_News" FromRole="News" ToRole="Image" />
+    <NavigationProperty Name="News_About" Relationship="Self.FK_News_About_News" FromRole="News" ToRole="News_About" />
+    <NavigationProperty Name="News_KeyPhrase" Relationship="Self.FK_News_KeyPhrase_News" FromRole="News" ToRole="News_KeyPhrase" />
+    <NavigationProperty Name="News_Mention" Relationship="Self.FK_News_Mentions_News" FromRole="News" ToRole="News_Mention" />
+    <NavigationProperty Name="News_Publisher" Relationship="Self.FK_News_Publisher_News" FromRole="News" ToRole="News_Publisher" />
+    <NavigationProperty Name="News_TermToSearch" Relationship="Self.FK_News_TermToSearch_News" FromRole="News" ToRole="News_TermToSearch" />
+    <NavigationProperty Name="News_Video" Relationship="Self.FK_News_Video_News" FromRole="News" ToRole="News_Video" />
+  </EntityType>
+  <EntityType Name="News_About">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idNews" Type="Int32" Nullable="false" />
+    <Property Name="idAbout" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="About" Relationship="Self.FK_News_About_About" FromRole="News_About" ToRole="About" />
+    <NavigationProperty Name="News" Relationship="Self.FK_News_About_News" FromRole="News_About" ToRole="News" />
+  </EntityType>
+  <EntityType Name="News_KeyPhrase">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idNews" Type="Int32" Nullable="false" />
+    <Property Name="idKeyPhrase" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="KeyPhrase" Relationship="Self.FK_News_KeyPhrase_KeyPhrase" FromRole="News_KeyPhrase" ToRole="KeyPhrase" />
+    <NavigationProperty Name="News" Relationship="Self.FK_News_KeyPhrase_News" FromRole="News_KeyPhrase" ToRole="News" />
+  </EntityType>
+  <EntityType Name="News_Mention">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idNews" Type="Int32" Nullable="false" />
+    <Property Name="idMention" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Mention" Relationship="Self.FK_News_Mentions_Mentions" FromRole="News_Mention" ToRole="Mention" />
+    <NavigationProperty Name="News" Relationship="Self.FK_News_Mentions_News" FromRole="News_Mention" ToRole="News" />
+  </EntityType>
+  <EntityType Name="News_Publisher">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idNews" Type="Int32" Nullable="false" />
+    <Property Name="idPublisher" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Publisher" Relationship="Self.FK_News_Publisher_Publisher" FromRole="News_Publisher" ToRole="Publisher" />
+    <NavigationProperty Name="News" Relationship="Self.FK_News_Publisher_News" FromRole="News_Publisher" ToRole="News" />
+  </EntityType>
+  <EntityType Name="News_TermToSearch">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idNews" Type="Int32" Nullable="false" />
+    <Property Name="idTermToSearch" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="TermToSearch" Relationship="Self.FK_News_TermToSearch_TermToSearch" FromRole="News_TermToSearch" ToRole="TermToSearch" />
+    <NavigationProperty Name="News" Relationship="Self.FK_News_TermToSearch_News" FromRole="News_TermToSearch" ToRole="News" />
+  </EntityType>
+  <EntityType Name="News_Video">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idNews" Type="Int32" Nullable="false" />
+    <Property Name="idVideo" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="News" Relationship="Self.FK_News_Video_News" FromRole="News_Video" ToRole="News" />
+    <NavigationProperty Name="Video" Relationship="Self.FK_News_Video_Video" FromRole="News_Video" ToRole="Video" />
+  </EntityType>
+  <EntityType Name="Favorite_Tweet">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idTweet" Type="Int32" Nullable="false" />
+    <Property Name="idUser" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ssas_jobs">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="startTime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="endTime" Type="DateTime" Precision="3" />
+    <Property Name="statusMessage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="lastCount" Type="Int32" />
+  </EntityType>
+  <EntityType Name="tweets_normalized">
+    <Key>
+      <PropertyRef Name="masterid" />
+    </Key>
+    <Property Name="masterid" Type="String" MaxLength="25" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="mentions" Type="Int32" />
+    <Property Name="hashtags" Type="Int32" />
+    <Property Name="tweet" Type="String" MaxLength="500" FixedLength="true" Unicode="true" />
+    <Property Name="twitterhandle" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="userlocation" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="usernumber" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="sentiment" Type="Double" />
+    <Property Name="sentimentbin" Type="Double" />
+    <Property Name="sentimentposneg" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <Property Name="lang" Type="String" MaxLength="4" FixedLength="true" Unicode="true" />
+    <Property Name="accounttag" Type="String" MaxLength="25" FixedLength="true" Unicode="true" />
+    <NavigationProperty Name="tweets_processed" Relationship="Self.ck_masteridconst" FromRole="tweets_normalized" ToRole="tweets_processed" />
+  </EntityType>
+  <EntityType Name="tweets_processed">
+    <Key>
+      <PropertyRef Name="tweetid" />
+    </Key>
+    <Property Name="tweetid" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="dateorig" Type="DateTime" Precision="3" />
+    <Property Name="hourofdate" Type="DateTime" Precision="3" />
+    <Property Name="minuteofdate" Type="DateTime" Precision="3" />
+    <Property Name="latitude" Type="Double" />
+    <Property Name="longitude" Type="Double" />
+    <Property Name="masterid" Type="String" MaxLength="25" FixedLength="true" Unicode="true" />
+    <Property Name="retweet" Type="String" MaxLength="6" FixedLength="true" Unicode="true" />
+    <Property Name="username" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="userlocation" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="usernumber" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="image_url" Type="String" MaxLength="200" FixedLength="true" Unicode="true" />
+    <Property Name="authorimage_url" Type="String" MaxLength="200" FixedLength="true" Unicode="true" />
+    <Property Name="direction" Type="String" MaxLength="20" FixedLength="true" Unicode="true" />
+    <Property Name="favorited" Type="Int32" />
+    <Property Name="user_followers" Type="Int32" />
+    <Property Name="user_friends" Type="Int32" />
+    <Property Name="user_favorites" Type="Int32" />
+    <Property Name="user_totaltweets" Type="Int32" />
+    <NavigationProperty Name="tweets_normalized" Relationship="Self.ck_masteridconst" FromRole="tweets_processed" ToRole="tweets_normalized" />
+  </EntityType>
+  <EntityType Name="twitter_query">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="IsAdvanced" Type="Boolean" Nullable="false" />
+    <Property Name="QueryString" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="TweetId" Type="String" MaxLength="20" FixedLength="true" Unicode="true" />
+  </EntityType>
+  <EntityType Name="twitter_query_details">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="ReadableId" Type="Int32" Nullable="false" />
+    <Property Name="Operator" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Operand" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+  </EntityType>
+  <EntityType Name="twitter_query_readable">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="QueryId" Type="Int32" Nullable="false" />
+    <Property Name="QueryReadable" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Query" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Creator">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Videos" Relationship="Self.FK_Video_Creator" FromRole="Creator" ToRole="Video" />
+  </EntityType>
+  <EntityType Name="EncodingFormat">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Videos" Relationship="Self.FK_Video_EncodingFormat" FromRole="EncodingFormat" ToRole="Video" />
+  </EntityType>
+  <EntityType Name="Favorite_Video">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idVideo" Type="Int32" Nullable="false" />
+    <Property Name="idUser" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="User" Relationship="Self.FK_Favorite_Video_User" FromRole="Favorite_Video" ToRole="User" />
+    <NavigationProperty Name="Video" Relationship="Self.FK_Favorite_Video_Video" FromRole="Favorite_Video" ToRole="Video" />
+  </EntityType>
+  <EntityType Name="Video">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="datePublished" Type="DateTime" Precision="3" />
+    <Property Name="idPublisher" Type="Int32" />
+    <Property Name="idCreator" Type="Int32" />
+    <Property Name="contentUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="hostPageUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="idEncodingFormat" Type="Int32" />
+    <Property Name="hostPageDisplayUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="width" Type="Int32" />
+    <Property Name="height" Type="Int32" />
+    <Property Name="duration" Type="Time" Precision="7" />
+    <Property Name="embedHtml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="allowHttpsEmbed" Type="Boolean" />
+    <Property Name="viewCount" Type="Int32" />
+    <Property Name="thumbnailWidth" Type="Int32" />
+    <Property Name="thumbnailHeight" Type="Int32" />
+    <Property Name="videoId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="allowMobileEmbed" Type="Boolean" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="thumbnailUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="webSearchUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="motionThumbnailUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Publisher" Relationship="Self.FK_Video_Publisher" FromRole="Video" ToRole="Publisher" />
+    <NavigationProperty Name="User_Video" Relationship="Self.FK_User_Video_Video" FromRole="Video" ToRole="User_Video" />
+    <NavigationProperty Name="Video_TermToSearch" Relationship="Self.FK_Video_TermToSearch_Video" FromRole="Video" ToRole="Video_TermToSearch" />
+    <NavigationProperty Name="News_Video" Relationship="Self.FK_News_Video_Video" FromRole="Video" ToRole="News_Video" />
+    <NavigationProperty Name="Creator" Relationship="Self.FK_Video_Creator" FromRole="Video" ToRole="Creator" />
+    <NavigationProperty Name="EncodingFormat" Relationship="Self.FK_Video_EncodingFormat" FromRole="Video" ToRole="EncodingFormat" />
+    <NavigationProperty Name="Favorite_Video" Relationship="Self.FK_Favorite_Video_Video" FromRole="Video" ToRole="Favorite_Video" />
+    <NavigationProperty Name="Video_KeyPhrase" Relationship="Self.FK_Video_KeyPhrase_Video" FromRole="Video" ToRole="Video_KeyPhrase" />
+    <NavigationProperty Name="Video_Opinion" Relationship="Self.FK_Video_Opinion_Video" FromRole="Video" ToRole="Video_Opinion" />
+    <NavigationProperty Name="VideoIndexers" Relationship="Self.FK_VideoIndexer_Video" FromRole="Video" ToRole="VideoIndexer" />
+  </EntityType>
+  <EntityType Name="Video_KeyPhrase">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idVideo" Type="Int32" Nullable="false" />
+    <Property Name="idKeyPhrase" Type="Int32" Nullable="false" />
+    <Property Name="startTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="endTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="KeyPhrase" Relationship="Self.FK_Video_KeyPhrase_KeyPhrase" FromRole="Video_KeyPhrase" ToRole="KeyPhrase" />
+    <NavigationProperty Name="Video" Relationship="Self.FK_Video_KeyPhrase_Video" FromRole="Video_KeyPhrase" ToRole="Video" />
+  </EntityType>
+  <EntityType Name="Video_Opinion">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idVideo" Type="Int32" Nullable="false" />
+    <Property Name="idOpinion" Type="Int32" Nullable="false" />
+    <Property Name="startTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="endTime" Type="Time" Nullable="false" Precision="7" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Opinion" Relationship="Self.FK_Video_Opinion_Opinion" FromRole="Video_Opinion" ToRole="Opinion" />
+    <NavigationProperty Name="Video" Relationship="Self.FK_Video_Opinion_Video" FromRole="Video_Opinion" ToRole="Video" />
+  </EntityType>
+  <EntityType Name="VideoIndexer">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idVideo" Type="Int32" Nullable="false" />
+    <Property Name="idVideoIndexer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="thumbnail" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Video" Relationship="Self.FK_VideoIndexer_Video" FromRole="VideoIndexer" ToRole="Video" />
+  </EntityType>
+  <EntityType Name="configuration">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="configuration_group" />
+      <PropertyRef Name="configuration_subgroup" />
+      <PropertyRef Name="name" />
+      <PropertyRef Name="visible" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="configuration_group" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="configuration_subgroup" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="visible" Type="Boolean" Nullable="false" />
+  </EntityType>
+  <EntityType Name="minimum_tweets">
+    <Key>
+      <PropertyRef Name="MinimumTweets" />
+    </Key>
+    <Property Name="MinimumTweets" Type="Int16" Nullable="false" />
+  </EntityType>
+  <EntityType Name="vw_Fuente">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="idNews" />
+      <PropertyRef Name="Expr1" />
+      <PropertyRef Name="score" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="idNews" Type="Int32" Nullable="false" />
+    <Property Name="Expr1" Type="Int32" Nullable="false" />
+    <Property Name="score" Type="Double" Nullable="false" />
+    <Property Name="datePublished" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="vw_Group_Term">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="term" />
+      <PropertyRef Name="idGroup" />
+      <PropertyRef Name="Expr1" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="term" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="idGroup" Type="Int32" Nullable="false" />
+    <Property Name="Expr1" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="vw_HistogramOpinions">
+    <Key>
+      <PropertyRef Name="clase" />
+    </Key>
+    <Property Name="clase" Type="Int32" Nullable="false" />
+    <Property Name="count" Type="Int32" />
+  </EntityType>
+  <EntityType Name="vw_KeyPhrase">
+    <Key>
+      <PropertyRef Name="name" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+  </EntityType>
+  <EntityType Name="vw_news">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="status" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="idCategory" Type="Int32" />
+    <Property Name="datePublished" Type="DateTime" Precision="3" />
+    <Property Name="Expr1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="status" Type="Boolean" Nullable="false" />
+    <Property Name="text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="score" Type="Double" />
+    <Property Name="idOpinion" Type="Int32" />
+    <Property Name="thumbnailContentUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="contentUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="thumbnailWidth" Type="Int32" />
+    <Property Name="thumbnailHeight" Type="Int32" />
+    <Property Name="idPublisher" Type="Int32" />
+    <Property Name="Expr2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Expr3" Type="Int32" />
+    <Property Name="Expr4" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Expr5" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="idUser" Type="Int32" />
+    <Property Name="Expr6" Type="Int32" />
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="vw_User_Video">
+    <Key>
+      <PropertyRef Name="name" />
+      <PropertyRef Name="id" />
+      <PropertyRef Name="Expr1" />
+      <PropertyRef Name="Expr2" />
+      <PropertyRef Name="idGroup" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="Expr1" Type="Int32" Nullable="false" />
+    <Property Name="Expr2" Type="Int32" Nullable="false" />
+    <Property Name="duration" Type="Time" Precision="7" />
+    <Property Name="datePublished" Type="DateTime" Precision="3" />
+    <Property Name="idGroup" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="vw_Video">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="startTime" Type="Time" Precision="7" />
+    <Property Name="endTime" Type="Time" Precision="7" />
+    <Property Name="idOpinion" Type="Int32" />
+    <Property Name="Expr1" Type="Time" Precision="7" />
+    <Property Name="Expr2" Type="Time" Precision="7" />
+    <Property Name="id" Type="Int32" Nullable="false" />
+    <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="datePublished" Type="DateTime" Precision="3" />
+    <Property Name="idPublisher" Type="Int32" />
+    <Property Name="idCreator" Type="Int32" />
+    <Property Name="contentUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="hostPageUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="idEncodingFormat" Type="Int32" />
+    <Property Name="hostPageDisplayUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="width" Type="Int32" />
+    <Property Name="height" Type="Int32" />
+    <Property Name="duration" Type="Time" Precision="7" />
+    <Property Name="embedHtml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="allowHttpsEmbed" Type="Boolean" />
+    <Property Name="viewCount" Type="Int32" />
+    <Property Name="thumbnailWidth" Type="Int32" />
+    <Property Name="thumbnailHeight" Type="Int32" />
+    <Property Name="videoId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="allowMobileEmbed" Type="Boolean" />
+    <Property Name="Expr3" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="thumbnailUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="webSearchUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="motionThumbnailUrl" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Expr4" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Expr5" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Expr6" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Expr7" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="idUser" Type="Int32" />
+    <Property Name="Expr8" Type="Int32" />
+    <Property Name="idState" Type="Int32" />
+    <Property Name="idVideoIndexer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="thumbnail" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Expr9" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Expr10" Type="Int32" />
+    <Property Name="Expr11" Type="Int32" />
+    <Property Name="idGroup" Type="Int32" />
+    <Property Name="Expr12" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="vw_configuration">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="configuration_group" />
+      <PropertyRef Name="configuration_subgroup" />
+      <PropertyRef Name="name" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="configuration_group" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="configuration_subgroup" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="name" Type="String" MaxLength="150" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="vw_minimum_tweets">
+    <Key>
+      <PropertyRef Name="Minimum_Tweets" />
+    </Key>
+    <Property Name="Minimum_Tweets" Type="Int16" Nullable="false" />
+  </EntityType>
+  <EntityType Name="vw_tweets_normalized">
+    <Key>
+      <PropertyRef Name="Master_Id" />
+    </Key>
+    <Property Name="Master_Id" Type="String" MaxLength="25" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="Mentions" Type="Int32" />
+    <Property Name="Hashtags" Type="Int32" />
+    <Property Name="Tweet" Type="String" MaxLength="500" FixedLength="true" Unicode="true" />
+    <Property Name="Twitter_Handle" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="User_Location" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="User_Number" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="Sentiment" Type="Double" />
+    <Property Name="Sentiment_Bin" Type="Double" />
+    <Property Name="Sentiment_Positive_Negative" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <Property Name="Language" Type="String" MaxLength="4" FixedLength="true" Unicode="true" />
+    <Property Name="Account_Tag" Type="String" MaxLength="25" FixedLength="true" Unicode="true" />
+  </EntityType>
+  <EntityType Name="vw_tweets_processed">
+    <Key>
+      <PropertyRef Name="Tweet_Id" />
+    </Key>
+    <Property Name="Tweet_Id" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="Original_Date" Type="DateTime" Precision="3" />
+    <Property Name="Date" Type="DateTime" Precision="0" />
+    <Property Name="Hours" Type="DateTime" Precision="3" />
+    <Property Name="Minutes" Type="DateTime" Precision="3" />
+    <Property Name="Latitude" Type="Double" />
+    <Property Name="Longitude" Type="Double" />
+    <Property Name="Master_Id" Type="String" MaxLength="25" FixedLength="true" Unicode="true" />
+    <Property Name="Retweet" Type="String" MaxLength="6" FixedLength="true" Unicode="true" />
+    <Property Name="Username" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="User_Location" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="User_Number" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="Image_URL" Type="String" MaxLength="200" FixedLength="true" Unicode="true" />
+    <Property Name="Author_Image_URL" Type="String" MaxLength="200" FixedLength="true" Unicode="true" />
+    <Property Name="Direction" Type="String" MaxLength="20" FixedLength="true" Unicode="true" />
+    <Property Name="Favorited" Type="Int32" />
+    <Property Name="User_Followers" Type="Int32" />
+    <Property Name="User_Friends" Type="Int32" />
+    <Property Name="User_Favourites" Type="Int32" />
+    <Property Name="User_Total_Tweets" Type="Int32" />
+  </EntityType>
+  <EntityType Name="database_firewall_rules">
+    <Key>
+      <PropertyRef Name="id" />
+      <PropertyRef Name="name" />
+      <PropertyRef Name="start_ip_address" />
+      <PropertyRef Name="end_ip_address" />
+      <PropertyRef Name="create_date" />
+      <PropertyRef Name="modify_date" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="start_ip_address" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="end_ip_address" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="create_date" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="modify_date" Type="DateTime" Nullable="false" Precision="3" />
+  </EntityType>
+  <Association Name="FK_Group_Client">
+    <End Role="Client" Type="Self.Client" Multiplicity="1" />
+    <End Role="Group" Type="Self.Group" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Client">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Group">
+        <PropertyRef Name="idClient" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Consumption_Group">
+    <End Role="Group" Type="Self.Group" Multiplicity="1" />
+    <End Role="Consumption" Type="Self.Consumption" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Group">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Consumption">
+        <PropertyRef Name="idGroup" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Consumption_Plan">
+    <End Role="Plan" Type="Self.Plan" Multiplicity="1" />
+    <End Role="Consumption" Type="Self.Consumption" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Plan">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Consumption">
+        <PropertyRef Name="idPlan" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Group_Term_Group">
+    <End Role="Group" Type="Self.Group" Multiplicity="1" />
+    <End Role="Group_Term" Type="Self.Group_Term" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Group">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Group_Term">
+        <PropertyRef Name="idGroup" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_User_Group">
+    <End Role="Group" Type="Self.Group" Multiplicity="1" />
+    <End Role="User" Type="Self.User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Group">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="User">
+        <PropertyRef Name="idGroup" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_User_Video_Group">
+    <End Role="Group" Type="Self.Group" Multiplicity="1" />
+    <End Role="User_Video" Type="Self.User_Video" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Group">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="User_Video">
+        <PropertyRef Name="idGroup" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Plan_Period">
+    <End Role="Period" Type="Self.Period" Multiplicity="1" />
+    <End Role="Plan" Type="Self.Plan" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Period">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Plan">
+        <PropertyRef Name="idPeriod" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Role_Permission_Permission">
+    <End Role="Permission" Type="Self.Permission" Multiplicity="1" />
+    <End Role="Role_Permission" Type="Self.Role_Permission" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Permission">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Role_Permission">
+        <PropertyRef Name="idPermission" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Plan_Product_Plan">
+    <End Role="Plan" Type="Self.Plan" Multiplicity="1" />
+    <End Role="Plan_Product" Type="Self.Plan_Product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Plan">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Plan_Product">
+        <PropertyRef Name="idPlan" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Plan_Sector">
+    <End Role="Sector" Type="Self.Sector" Multiplicity="1" />
+    <End Role="Plan" Type="Self.Plan" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Sector">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Plan">
+        <PropertyRef Name="idSector" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Plan_Product_Product">
+    <End Role="Product" Type="Self.Product" Multiplicity="1" />
+    <End Role="Plan_Product" Type="Self.Plan_Product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Product">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Plan_Product">
+        <PropertyRef Name="idProduct" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Role_Permission_Role">
+    <End Role="Role" Type="Self.Role" Multiplicity="1" />
+    <End Role="Role_Permission" Type="Self.Role_Permission" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Role">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Role_Permission">
+        <PropertyRef Name="idRole" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_User_Role">
+    <End Role="Role" Type="Self.Role" Multiplicity="1" />
+    <End Role="User" Type="Self.User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Role">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="User">
+        <PropertyRef Name="idRole" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Favorite_News_User">
+    <End Role="User" Type="Self.User" Multiplicity="1" />
+    <End Role="Favorite_News" Type="Self.Favorite_News" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Favorite_News">
+        <PropertyRef Name="idUser" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Favorite_Video_User">
+    <End Role="User" Type="Self.User" Multiplicity="1" />
+    <End Role="Favorite_Video" Type="Self.Favorite_Video" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Favorite_Video">
+        <PropertyRef Name="idUser" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Group_Term_TermToSearch">
+    <End Role="TermToSearch" Type="Self.TermToSearch" Multiplicity="1" />
+    <End Role="Group_Term" Type="Self.Group_Term" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TermToSearch">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Group_Term">
+        <PropertyRef Name="idTerm" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_KeyPhrase_KeyPhrase">
+    <End Role="KeyPhrase" Type="Self.KeyPhrase" Multiplicity="1" />
+    <End Role="News_KeyPhrase" Type="Self.News_KeyPhrase" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="KeyPhrase">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_KeyPhrase">
+        <PropertyRef Name="idKeyPhrase" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Video_KeyPhrase_KeyPhrase">
+    <End Role="KeyPhrase" Type="Self.KeyPhrase" Multiplicity="1" />
+    <End Role="Video_KeyPhrase" Type="Self.Video_KeyPhrase" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="KeyPhrase">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Video_KeyPhrase">
+        <PropertyRef Name="idKeyPhrase" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_Opinion">
+    <End Role="Opinion" Type="Self.Opinion" Multiplicity="0..1" />
+    <End Role="News" Type="Self.News" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Opinion">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News">
+        <PropertyRef Name="idOpinion" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Video_Opinion_Opinion">
+    <End Role="Opinion" Type="Self.Opinion" Multiplicity="1" />
+    <End Role="Video_Opinion" Type="Self.Video_Opinion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Opinion">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Video_Opinion">
+        <PropertyRef Name="idOpinion" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_Publisher_Publisher">
+    <End Role="Publisher" Type="Self.Publisher" Multiplicity="1" />
+    <End Role="News_Publisher" Type="Self.News_Publisher" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Publisher">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_Publisher">
+        <PropertyRef Name="idPublisher" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Publisher_PublisherType">
+    <End Role="PublisherType" Type="Self.PublisherType" Multiplicity="0..1" />
+    <End Role="Publisher" Type="Self.Publisher" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PublisherType">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Publisher">
+        <PropertyRef Name="idType" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Publisher_State_Publisher">
+    <End Role="Publisher" Type="Self.Publisher" Multiplicity="1" />
+    <End Role="Publisher_State" Type="Self.Publisher_State" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Publisher">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Publisher_State">
+        <PropertyRef Name="idPublisher" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Video_Publisher">
+    <End Role="Publisher" Type="Self.Publisher" Multiplicity="0..1" />
+    <End Role="Video" Type="Self.Video" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Publisher">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Video">
+        <PropertyRef Name="idPublisher" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Publisher_State_State">
+    <End Role="State" Type="Self.State" Multiplicity="1" />
+    <End Role="Publisher_State" Type="Self.Publisher_State" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="State">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Publisher_State">
+        <PropertyRef Name="idState" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_TermToSearch_TermToSearch">
+    <End Role="TermToSearch" Type="Self.TermToSearch" Multiplicity="1" />
+    <End Role="News_TermToSearch" Type="Self.News_TermToSearch" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TermToSearch">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_TermToSearch">
+        <PropertyRef Name="idTermToSearch" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Video_TermToSearch_TermToSearch">
+    <End Role="TermToSearch" Type="Self.TermToSearch" Multiplicity="1" />
+    <End Role="Video_TermToSearch" Type="Self.Video_TermToSearch" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TermToSearch">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Video_TermToSearch">
+        <PropertyRef Name="idTermToSearch" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_User_Video_Video">
+    <End Role="Video" Type="Self.Video" Multiplicity="1" />
+    <End Role="User_Video" Type="Self.User_Video" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Video">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="User_Video">
+        <PropertyRef Name="idVideo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Video_TermToSearch_Video">
+    <End Role="Video" Type="Self.Video" Multiplicity="1" />
+    <End Role="Video_TermToSearch" Type="Self.Video_TermToSearch" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Video">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Video_TermToSearch">
+        <PropertyRef Name="idVideo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_About_About">
+    <End Role="About" Type="Self.About" Multiplicity="1" />
+    <End Role="News_About" Type="Self.News_About" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="About">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_About">
+        <PropertyRef Name="idAbout" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_Category">
+    <End Role="Category" Type="Self.Category" Multiplicity="0..1" />
+    <End Role="News" Type="Self.News" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Category">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News">
+        <PropertyRef Name="idCategory" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Favorite_News_News">
+    <End Role="News" Type="Self.News" Multiplicity="1" />
+    <End Role="Favorite_News" Type="Self.Favorite_News" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="News">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Favorite_News">
+        <PropertyRef Name="idNews" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Image_News">
+    <End Role="News" Type="Self.News" Multiplicity="1" />
+    <End Role="Image" Type="Self.Image" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="News">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Image">
+        <PropertyRef Name="idNews" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_Mentions_Mentions">
+    <End Role="Mention" Type="Self.Mention" Multiplicity="1" />
+    <End Role="News_Mention" Type="Self.News_Mention" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Mention">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_Mention">
+        <PropertyRef Name="idMention" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_About_News">
+    <End Role="News" Type="Self.News" Multiplicity="1" />
+    <End Role="News_About" Type="Self.News_About" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="News">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_About">
+        <PropertyRef Name="idNews" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_KeyPhrase_News">
+    <End Role="News" Type="Self.News" Multiplicity="1" />
+    <End Role="News_KeyPhrase" Type="Self.News_KeyPhrase" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="News">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_KeyPhrase">
+        <PropertyRef Name="idNews" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_Mentions_News">
+    <End Role="News" Type="Self.News" Multiplicity="1" />
+    <End Role="News_Mention" Type="Self.News_Mention" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="News">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_Mention">
+        <PropertyRef Name="idNews" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_Publisher_News">
+    <End Role="News" Type="Self.News" Multiplicity="1" />
+    <End Role="News_Publisher" Type="Self.News_Publisher" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="News">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_Publisher">
+        <PropertyRef Name="idNews" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_TermToSearch_News">
+    <End Role="News" Type="Self.News" Multiplicity="1" />
+    <End Role="News_TermToSearch" Type="Self.News_TermToSearch" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="News">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_TermToSearch">
+        <PropertyRef Name="idNews" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_Video_News">
+    <End Role="News" Type="Self.News" Multiplicity="1" />
+    <End Role="News_Video" Type="Self.News_Video" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="News">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_Video">
+        <PropertyRef Name="idNews" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_News_Video_Video">
+    <End Role="Video" Type="Self.Video" Multiplicity="1" />
+    <End Role="News_Video" Type="Self.News_Video" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Video">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="News_Video">
+        <PropertyRef Name="idVideo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="ck_masteridconst">
+    <End Role="tweets_normalized" Type="Self.tweets_normalized" Multiplicity="0..1" />
+    <End Role="tweets_processed" Type="Self.tweets_processed" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tweets_normalized">
+        <PropertyRef Name="masterid" />
+      </Principal>
+      <Dependent Role="tweets_processed">
+        <PropertyRef Name="masterid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Video_Creator">
+    <End Role="Creator" Type="Self.Creator" Multiplicity="0..1" />
+    <End Role="Video" Type="Self.Video" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Creator">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Video">
+        <PropertyRef Name="idCreator" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Video_EncodingFormat">
+    <End Role="EncodingFormat" Type="Self.EncodingFormat" Multiplicity="0..1" />
+    <End Role="Video" Type="Self.Video" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="EncodingFormat">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Video">
+        <PropertyRef Name="idEncodingFormat" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Favorite_Video_Video">
+    <End Role="Video" Type="Self.Video" Multiplicity="1" />
+    <End Role="Favorite_Video" Type="Self.Favorite_Video" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Video">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Favorite_Video">
+        <PropertyRef Name="idVideo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Video_KeyPhrase_Video">
+    <End Role="Video" Type="Self.Video" Multiplicity="1" />
+    <End Role="Video_KeyPhrase" Type="Self.Video_KeyPhrase" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Video">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Video_KeyPhrase">
+        <PropertyRef Name="idVideo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Video_Opinion_Video">
+    <End Role="Video" Type="Self.Video" Multiplicity="1" />
+    <End Role="Video_Opinion" Type="Self.Video_Opinion" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Video">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Video_Opinion">
+        <PropertyRef Name="idVideo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_VideoIndexer_Video">
+    <End Role="Video" Type="Self.Video" Multiplicity="1" />
+    <End Role="VideoIndexer" Type="Self.VideoIndexer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Video">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="VideoIndexer">
+        <PropertyRef Name="idVideo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="DB_medIAEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Clients" EntityType="Self.Client" />
+    <EntitySet Name="Consumptions" EntityType="Self.Consumption" />
+    <EntitySet Name="Groups" EntityType="Self.Group" />
+    <EntitySet Name="Licenses" EntityType="Self.License" />
+    <EntitySet Name="Periods" EntityType="Self.Period" />
+    <EntitySet Name="Permissions" EntityType="Self.Permission" />
+    <EntitySet Name="Plans" EntityType="Self.Plan" />
+    <EntitySet Name="Plan_Product" EntityType="Self.Plan_Product" />
+    <EntitySet Name="Products" EntityType="Self.Product" />
+    <EntitySet Name="Roles" EntityType="Self.Role" />
+    <EntitySet Name="Role_Permission" EntityType="Self.Role_Permission" />
+    <EntitySet Name="Sectors" EntityType="Self.Sector" />
+    <EntitySet Name="Status" EntityType="Self.Status" />
+    <EntitySet Name="Users" EntityType="Self.User" />
+    <EntitySet Name="Group_Term" EntityType="Self.Group_Term" />
+    <EntitySet Name="KeyPhrases" EntityType="Self.KeyPhrase" />
+    <EntitySet Name="Opinions" EntityType="Self.Opinion" />
+    <EntitySet Name="OpinionLimits" EntityType="Self.OpinionLimit" />
+    <EntitySet Name="Publishers" EntityType="Self.Publisher" />
+    <EntitySet Name="Publisher_State" EntityType="Self.Publisher_State" />
+    <EntitySet Name="PublisherTypes" EntityType="Self.PublisherType" />
+    <EntitySet Name="States" EntityType="Self.State" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+    <EntitySet Name="TermToSearches" EntityType="Self.TermToSearch" />
+    <EntitySet Name="User_Video" EntityType="Self.User_Video" />
+    <EntitySet Name="Video_TermToSearch" EntityType="Self.Video_TermToSearch" />
+    <EntitySet Name="Abouts" EntityType="Self.About" />
+    <EntitySet Name="Categories" EntityType="Self.Category" />
+    <EntitySet Name="Favorite_News" EntityType="Self.Favorite_News" />
+    <EntitySet Name="Images" EntityType="Self.Image" />
+    <EntitySet Name="Mentions" EntityType="Self.Mention" />
+    <EntitySet Name="News" EntityType="Self.News" />
+    <EntitySet Name="News_About" EntityType="Self.News_About" />
+    <EntitySet Name="News_KeyPhrase" EntityType="Self.News_KeyPhrase" />
+    <EntitySet Name="News_Mention" EntityType="Self.News_Mention" />
+    <EntitySet Name="News_Publisher" EntityType="Self.News_Publisher" />
+    <EntitySet Name="News_TermToSearch" EntityType="Self.News_TermToSearch" />
+    <EntitySet Name="News_Video" EntityType="Self.News_Video" />
+    <EntitySet Name="Favorite_Tweet" EntityType="Self.Favorite_Tweet" />
+    <EntitySet Name="ssas_jobs" EntityType="Self.ssas_jobs" />
+    <EntitySet Name="tweets_normalized" EntityType="Self.tweets_normalized" />
+    <EntitySet Name="tweets_processed" EntityType="Self.tweets_processed" />
+    <EntitySet Name="twitter_query" EntityType="Self.twitter_query" />
+    <EntitySet Name="twitter_query_details" EntityType="Self.twitter_query_details" />
+    <EntitySet Name="twitter_query_readable" EntityType="Self.twitter_query_readable" />
+    <EntitySet Name="Creators" EntityType="Self.Creator" />
+    <EntitySet Name="EncodingFormats" EntityType="Self.EncodingFormat" />
+    <EntitySet Name="Favorite_Video" EntityType="Self.Favorite_Video" />
+    <EntitySet Name="Videos" EntityType="Self.Video" />
+    <EntitySet Name="Video_KeyPhrase" EntityType="Self.Video_KeyPhrase" />
+    <EntitySet Name="Video_Opinion" EntityType="Self.Video_Opinion" />
+    <EntitySet Name="VideoIndexers" EntityType="Self.VideoIndexer" />
+    <EntitySet Name="configurations" EntityType="Self.configuration" />
+    <EntitySet Name="minimum_tweets" EntityType="Self.minimum_tweets" />
+    <EntitySet Name="vw_Fuente" EntityType="Self.vw_Fuente" />
+    <EntitySet Name="vw_Group_Term" EntityType="Self.vw_Group_Term" />
+    <EntitySet Name="vw_HistogramOpinions" EntityType="Self.vw_HistogramOpinions" />
+    <EntitySet Name="vw_KeyPhrase" EntityType="Self.vw_KeyPhrase" />
+    <EntitySet Name="vw_news" EntityType="Self.vw_news" />
+    <EntitySet Name="vw_User_Video" EntityType="Self.vw_User_Video" />
+    <EntitySet Name="vw_Video" EntityType="Self.vw_Video" />
+    <EntitySet Name="vw_configuration" EntityType="Self.vw_configuration" />
+    <EntitySet Name="vw_minimum_tweets" EntityType="Self.vw_minimum_tweets" />
+    <EntitySet Name="vw_tweets_normalized" EntityType="Self.vw_tweets_normalized" />
+    <EntitySet Name="vw_tweets_processed" EntityType="Self.vw_tweets_processed" />
+    <EntitySet Name="database_firewall_rules" EntityType="Self.database_firewall_rules" />
+    <AssociationSet Name="FK_Group_Client" Association="Self.FK_Group_Client">
+      <End Role="Client" EntitySet="Clients" />
+      <End Role="Group" EntitySet="Groups" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Consumption_Group" Association="Self.FK_Consumption_Group">
+      <End Role="Group" EntitySet="Groups" />
+      <End Role="Consumption" EntitySet="Consumptions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Consumption_Plan" Association="Self.FK_Consumption_Plan">
+      <End Role="Plan" EntitySet="Plans" />
+      <End Role="Consumption" EntitySet="Consumptions" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Group_Term_Group" Association="Self.FK_Group_Term_Group">
+      <End Role="Group" EntitySet="Groups" />
+      <End Role="Group_Term" EntitySet="Group_Term" />
+    </AssociationSet>
+    <AssociationSet Name="FK_User_Group" Association="Self.FK_User_Group">
+      <End Role="Group" EntitySet="Groups" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="FK_User_Video_Group" Association="Self.FK_User_Video_Group">
+      <End Role="Group" EntitySet="Groups" />
+      <End Role="User_Video" EntitySet="User_Video" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Plan_Period" Association="Self.FK_Plan_Period">
+      <End Role="Period" EntitySet="Periods" />
+      <End Role="Plan" EntitySet="Plans" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Role_Permission_Permission" Association="Self.FK_Role_Permission_Permission">
+      <End Role="Permission" EntitySet="Permissions" />
+      <End Role="Role_Permission" EntitySet="Role_Permission" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Plan_Product_Plan" Association="Self.FK_Plan_Product_Plan">
+      <End Role="Plan" EntitySet="Plans" />
+      <End Role="Plan_Product" EntitySet="Plan_Product" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Plan_Sector" Association="Self.FK_Plan_Sector">
+      <End Role="Sector" EntitySet="Sectors" />
+      <End Role="Plan" EntitySet="Plans" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Plan_Product_Product" Association="Self.FK_Plan_Product_Product">
+      <End Role="Product" EntitySet="Products" />
+      <End Role="Plan_Product" EntitySet="Plan_Product" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Role_Permission_Role" Association="Self.FK_Role_Permission_Role">
+      <End Role="Role" EntitySet="Roles" />
+      <End Role="Role_Permission" EntitySet="Role_Permission" />
+    </AssociationSet>
+    <AssociationSet Name="FK_User_Role" Association="Self.FK_User_Role">
+      <End Role="Role" EntitySet="Roles" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Favorite_News_User" Association="Self.FK_Favorite_News_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Favorite_News" EntitySet="Favorite_News" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Favorite_Video_User" Association="Self.FK_Favorite_Video_User">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Favorite_Video" EntitySet="Favorite_Video" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Group_Term_TermToSearch" Association="Self.FK_Group_Term_TermToSearch">
+      <End Role="TermToSearch" EntitySet="TermToSearches" />
+      <End Role="Group_Term" EntitySet="Group_Term" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_KeyPhrase_KeyPhrase" Association="Self.FK_News_KeyPhrase_KeyPhrase">
+      <End Role="KeyPhrase" EntitySet="KeyPhrases" />
+      <End Role="News_KeyPhrase" EntitySet="News_KeyPhrase" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Video_KeyPhrase_KeyPhrase" Association="Self.FK_Video_KeyPhrase_KeyPhrase">
+      <End Role="KeyPhrase" EntitySet="KeyPhrases" />
+      <End Role="Video_KeyPhrase" EntitySet="Video_KeyPhrase" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_Opinion" Association="Self.FK_News_Opinion">
+      <End Role="Opinion" EntitySet="Opinions" />
+      <End Role="News" EntitySet="News" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Video_Opinion_Opinion" Association="Self.FK_Video_Opinion_Opinion">
+      <End Role="Opinion" EntitySet="Opinions" />
+      <End Role="Video_Opinion" EntitySet="Video_Opinion" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_Publisher_Publisher" Association="Self.FK_News_Publisher_Publisher">
+      <End Role="Publisher" EntitySet="Publishers" />
+      <End Role="News_Publisher" EntitySet="News_Publisher" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Publisher_PublisherType" Association="Self.FK_Publisher_PublisherType">
+      <End Role="PublisherType" EntitySet="PublisherTypes" />
+      <End Role="Publisher" EntitySet="Publishers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Publisher_State_Publisher" Association="Self.FK_Publisher_State_Publisher">
+      <End Role="Publisher" EntitySet="Publishers" />
+      <End Role="Publisher_State" EntitySet="Publisher_State" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Video_Publisher" Association="Self.FK_Video_Publisher">
+      <End Role="Publisher" EntitySet="Publishers" />
+      <End Role="Video" EntitySet="Videos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Publisher_State_State" Association="Self.FK_Publisher_State_State">
+      <End Role="State" EntitySet="States" />
+      <End Role="Publisher_State" EntitySet="Publisher_State" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_TermToSearch_TermToSearch" Association="Self.FK_News_TermToSearch_TermToSearch">
+      <End Role="TermToSearch" EntitySet="TermToSearches" />
+      <End Role="News_TermToSearch" EntitySet="News_TermToSearch" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Video_TermToSearch_TermToSearch" Association="Self.FK_Video_TermToSearch_TermToSearch">
+      <End Role="TermToSearch" EntitySet="TermToSearches" />
+      <End Role="Video_TermToSearch" EntitySet="Video_TermToSearch" />
+    </AssociationSet>
+    <AssociationSet Name="FK_User_Video_Video" Association="Self.FK_User_Video_Video">
+      <End Role="Video" EntitySet="Videos" />
+      <End Role="User_Video" EntitySet="User_Video" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Video_TermToSearch_Video" Association="Self.FK_Video_TermToSearch_Video">
+      <End Role="Video" EntitySet="Videos" />
+      <End Role="Video_TermToSearch" EntitySet="Video_TermToSearch" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_About_About" Association="Self.FK_News_About_About">
+      <End Role="About" EntitySet="Abouts" />
+      <End Role="News_About" EntitySet="News_About" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_Category" Association="Self.FK_News_Category">
+      <End Role="Category" EntitySet="Categories" />
+      <End Role="News" EntitySet="News" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Favorite_News_News" Association="Self.FK_Favorite_News_News">
+      <End Role="News" EntitySet="News" />
+      <End Role="Favorite_News" EntitySet="Favorite_News" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Image_News" Association="Self.FK_Image_News">
+      <End Role="News" EntitySet="News" />
+      <End Role="Image" EntitySet="Images" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_Mentions_Mentions" Association="Self.FK_News_Mentions_Mentions">
+      <End Role="Mention" EntitySet="Mentions" />
+      <End Role="News_Mention" EntitySet="News_Mention" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_About_News" Association="Self.FK_News_About_News">
+      <End Role="News" EntitySet="News" />
+      <End Role="News_About" EntitySet="News_About" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_KeyPhrase_News" Association="Self.FK_News_KeyPhrase_News">
+      <End Role="News" EntitySet="News" />
+      <End Role="News_KeyPhrase" EntitySet="News_KeyPhrase" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_Mentions_News" Association="Self.FK_News_Mentions_News">
+      <End Role="News" EntitySet="News" />
+      <End Role="News_Mention" EntitySet="News_Mention" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_Publisher_News" Association="Self.FK_News_Publisher_News">
+      <End Role="News" EntitySet="News" />
+      <End Role="News_Publisher" EntitySet="News_Publisher" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_TermToSearch_News" Association="Self.FK_News_TermToSearch_News">
+      <End Role="News" EntitySet="News" />
+      <End Role="News_TermToSearch" EntitySet="News_TermToSearch" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_Video_News" Association="Self.FK_News_Video_News">
+      <End Role="News" EntitySet="News" />
+      <End Role="News_Video" EntitySet="News_Video" />
+    </AssociationSet>
+    <AssociationSet Name="FK_News_Video_Video" Association="Self.FK_News_Video_Video">
+      <End Role="Video" EntitySet="Videos" />
+      <End Role="News_Video" EntitySet="News_Video" />
+    </AssociationSet>
+    <AssociationSet Name="ck_masteridconst" Association="Self.ck_masteridconst">
+      <End Role="tweets_normalized" EntitySet="tweets_normalized" />
+      <End Role="tweets_processed" EntitySet="tweets_processed" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Video_Creator" Association="Self.FK_Video_Creator">
+      <End Role="Creator" EntitySet="Creators" />
+      <End Role="Video" EntitySet="Videos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Video_EncodingFormat" Association="Self.FK_Video_EncodingFormat">
+      <End Role="EncodingFormat" EntitySet="EncodingFormats" />
+      <End Role="Video" EntitySet="Videos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Favorite_Video_Video" Association="Self.FK_Favorite_Video_Video">
+      <End Role="Video" EntitySet="Videos" />
+      <End Role="Favorite_Video" EntitySet="Favorite_Video" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Video_KeyPhrase_Video" Association="Self.FK_Video_KeyPhrase_Video">
+      <End Role="Video" EntitySet="Videos" />
+      <End Role="Video_KeyPhrase" EntitySet="Video_KeyPhrase" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Video_Opinion_Video" Association="Self.FK_Video_Opinion_Video">
+      <End Role="Video" EntitySet="Videos" />
+      <End Role="Video_Opinion" EntitySet="Video_Opinion" />
+    </AssociationSet>
+    <AssociationSet Name="FK_VideoIndexer_Video" Association="Self.FK_VideoIndexer_Video">
+      <End Role="Video" EntitySet="Videos" />
+      <End Role="VideoIndexer" EntitySet="VideoIndexers" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5483F345-245A-448F-B228-886F33C189E4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Model</RootNamespace>
+    <AssemblyName>Model</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="About.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Category.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Client.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="configuration.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Consumption.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Creator.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="database_firewall_rules.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB_medIA.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DB_medIA.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB_medIA.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB_medIA.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DB_medIA.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="EncodingFormat.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Favorite_News.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Favorite_Tweet.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Favorite_Video.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Group.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Group_Term.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Image.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KeyPhrase.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="License.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mention.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="minimum_tweets.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="News.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="News_About.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="News_KeyPhrase.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="News_Mention.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="News_Publisher.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="News_TermToSearch.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="News_Video.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Opinion.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OpinionLimit.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Period.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Permission.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Plan.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Plan_Product.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Product.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Publisher.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PublisherType.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Publisher_State.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Role.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Role_Permission.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Sector.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ssas_jobs.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="State.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Status.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sysdiagram.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TermToSearch.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tweets_normalized.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="tweets_processed.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="twitter_query.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="twitter_query_details.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="twitter_query_readable.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="User.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="User_Video.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Video.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VideoIndexer.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Video_KeyPhrase.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Video_Opinion.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Video_TermToSearch.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_configuration.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_Fuente.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_Group_Term.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_HistogramOpinions.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_KeyPhrase.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_minimum_tweets.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_news.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_tweets_normalized.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_tweets_processed.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_User_Video.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vw_Video.cs">
+      <DependentUpon>DB_medIA.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="DB_medIA.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>DB_medIA.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <None Include="DB_medIA.edmx.diagram">
+      <DependentUpon>DB_medIA.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DB_medIA.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>DB_medIA.Context.cs</LastGenOutput>
+      <DependentUpon>DB_medIA.edmx</DependentUpon>
+    </Content>
+    <Content Include="DB_medIA.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DB_medIA.edmx</DependentUpon>
+      <LastGenOutput>DB_medIA.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

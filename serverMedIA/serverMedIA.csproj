@@ -10,7 +10,11 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0-preview1-26216-02" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Security" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

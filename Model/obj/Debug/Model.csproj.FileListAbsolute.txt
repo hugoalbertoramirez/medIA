@@ -1,0 +1,11 @@
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\bin\Debug\Model.dll.config
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\bin\Debug\Model.dll
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\bin\Debug\Model.pdb
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\bin\Debug\EntityFramework.dll
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\bin\Debug\EntityFramework.xml
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\obj\Debug\Model.csprojResolveAssemblyReference.cache
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\obj\Debug\Model.csproj.CoreCompileInputs.cache
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\obj\Debug\Model.dll
+C:\Users\Hugo Ramirez\Desktop\Git\medIA\Model\obj\Debug\Model.pdb
