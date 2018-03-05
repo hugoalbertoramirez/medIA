@@ -904,7 +904,7 @@ namespace serverMedIA
         public static string BingNewsSearch(string searchQuery)
         {
             // Construct the URI of the search request
-            var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX";
+            var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX" + "&freshness=Day" + "&sortBy=Date";
 
             // Perform the Web request and get the response
             WebRequest request = HttpWebRequest.Create(uriQuery);
