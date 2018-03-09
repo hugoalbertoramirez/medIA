@@ -25,10 +25,11 @@ namespace serverMedIA
 {
     public static class SearchAndAnalysis
     {
+        // modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         public static string API_SEARCH_KEY = ConfigurationManager.ConnectionStrings["API_SEARCH_KEY"].ConnectionString;
-        public static string URI_API_SEARCH_KEY = ConfigurationManager.ConnectionStrings["URI_API_SEARCH_KEY"].ConnectionString;
+        public static string URI_API_NEWS_SEARCH_KEY = ConfigurationManager.ConnectionStrings["URI_API_NEWS_SEARCH_KEY"].ConnectionString;
         public static int MAX_NUMBER_NEWS = Int32.Parse(ConfigurationManager.ConnectionStrings["MAX_NUMBER_NEWS"].ConnectionString);
-        public static string SQLDB_CONNECTION = ConfigurationManager.ConnectionStrings["SQLDB_CONNECTION"].ConnectionString;
+        public static string SQLDB_CONNECTION = ConfigurationManager.ConnectionStrings["SQLDB_CONNECTION_DEV"].ConnectionString;
         public static string API_TEXT_ANALITICS_KEY = ConfigurationManager.ConnectionStrings["API_TEXT_ANALITICS_KEY"].ConnectionString;
         public static string URI_API_TEXT_ANALITICS = ConfigurationManager.ConnectionStrings["URI_API_TEXT_ANALITICS"].ConnectionString;
         public static int MAX_NUMBER_OPINION = Int32.Parse(ConfigurationManager.ConnectionStrings["MAX_NUMBER_OPINION"].ConnectionString);
@@ -36,34 +37,20 @@ namespace serverMedIA
         public static int MAX_NUMBER_KEY_PHRASE = Int32.Parse(ConfigurationManager.ConnectionStrings["MAX_NUMBER_KEY_PHRASE"].ConnectionString);
         public static string URI_API_VIDEOSEARCH_KEY = ConfigurationManager.ConnectionStrings["URI_API_VIDEOSEARCH_KEY"].ConnectionString;
         public static int MAX_NUMBER_VIDEOS = Int32.Parse(ConfigurationManager.ConnectionStrings["MAX_NUMBER_VIDEOS"].ConnectionString);
+        public static string URI_API_SEARCH_KEY = ConfigurationManager.ConnectionStrings["URI_API_SEARCH_KEY"].ConnectionString;
 
         public static SqlConnection connection;
         public static SqlTransaction transaction;
         public static TraceWriter log;
 
-        [FunctionName("SearchAndAnalysis")]
-        public static void Run([TimerTrigger("0 0 0/2 * * *")]TimerInfo myTimer, TraceWriter _log)
+        [FunctionName("SearchAndAnalysis")] // 0 0 0/2 * * *
+        public static void Run([TimerTrigger("* * * * * *")]TimerInfo myTimer, TraceWriter _log)
         {
             log = _log;
 
             log.Info("function app working >>");
 
-            using (DB_medIAEntities db = new DB_medIAEntities())
-            {
-                News news = new News();
-                Mention mention = new Mention();
-                News_Mention nm = new News_Mention();
-
-                nm.Mention = mention;
-                nm.News = news;
-
-                news.News_Mention.Add(nm);
-                
-
-                
-            }
-            
-            
+            SearchMainPublishers();
 
             //SearchNews();
 
@@ -192,7 +179,6 @@ namespace serverMedIA
                                 InsertAbouts(value["about"], idNews.Value) &&
                                 InsertMentions(value["mentions"], idNews.Value))
                             {
-                                log.Info("News with all information inserted successfully: " + idNews);
                                 transaction.Commit();
                             }
                             else
@@ -218,7 +204,7 @@ namespace serverMedIA
             }
             catch (Exception e)
             {
-                log.Info("Error at getting terms to search : \n" + e.Message);
+                log.Error("Error at getting terms to search : \n" + e.Message);
             }
             return termsToSearch;
         }
@@ -250,14 +236,11 @@ namespace serverMedIA
                 DataTable result = GetDataTable(Query(query));
                 string[] differentNews = new string[result.Rows.Count];
 
-                log.Info("About to insert following news: \n");
                 int resultRowsCount = result.Rows.Count;
                 for (int i = 0; i < resultRowsCount; i++)
                 {
                     differentNews[i] = result.Rows[i].ItemArray[0].ToString();
-                    // log.Info(differentNews[i]);
                 }
-
 
                 return differentNews;
             }
@@ -279,15 +262,9 @@ namespace serverMedIA
 
                 if (result.Rows.Count > 0)
                 {
-                    log.Info("News already in DB: " + url);
-
                     idNews = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
 
                     return idNews;
-                }
-                else
-                {
-                    log.Info("News does not exist in DB: " + url);
                 }
             }
             catch (Exception e)
@@ -310,8 +287,6 @@ namespace serverMedIA
                 if (result.Rows.Count > 0)
                 {
                     idNewsTermToSearch = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                    log.Info("News and Term already related in DB: " + idNewsTermToSearch);
                 }
             }
             catch (Exception e)
@@ -345,8 +320,6 @@ namespace serverMedIA
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idNews = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
 
-                log.Info("Succeded inserting News: " + idNews);
-
                 return true;
             }
             catch (Exception e)
@@ -373,8 +346,6 @@ namespace serverMedIA
             try
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
-
-                log.Info("Succeded inserting News_TermToSearch");
                 return true;
             }
             catch (Exception e)
@@ -420,7 +391,6 @@ namespace serverMedIA
 
                 if (result.Rows.Count > 0)
                 {
-                    log.Info("Category already in DB: " + name);
                     idCategory = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
                 }
             }
@@ -445,8 +415,6 @@ namespace serverMedIA
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idCategory = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                log.Info("Succeded inserting Category: " + idCategory);
             }
             catch (Exception e)
             {
@@ -503,7 +471,6 @@ namespace serverMedIA
 
                 if (result.Rows.Count > 0)
                 {
-                    log.Info("About already in DB: " + readLink);
                     idAbout = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
                 }
             }
@@ -529,8 +496,6 @@ namespace serverMedIA
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idAbout = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                log.Info("Succeded inserting About: " + idAbout);
             }
             catch (Exception e)
             {
@@ -565,8 +530,6 @@ namespace serverMedIA
             try
             {
                 ExecuteQuery(query);
-
-                log.Info("Succeded inserting News_About");
                 return true;
             }
             catch (Exception e)
@@ -588,7 +551,7 @@ namespace serverMedIA
             }
 
             List<int> ids = new List<int>(5);
-            int? idPublisher, idPublisherType;
+            int? idPublisher, idPublisherType, idPublisher_PublisherType;
 
             foreach (var a in publisher)
             {
@@ -600,14 +563,30 @@ namespace serverMedIA
                 }
                 else
                 {
-                    idPublisherType = InsertPublisherTypeInDB(a["_type"].ToString());
-                    if (idPublisherType != null)
-                    {
-                        idPublisher = InsertPublisherInDB(a["name"].ToString(), idPublisherType.Value);
+                    idPublisher = InsertPublisherInDB(a["name"].ToString());
 
-                        if (idPublisher != null)
+                    if (idPublisher != null)
+                    {
+                        idPublisherType = IsPublisherTypeInDB(a["_type"].ToString());
+
+                        if (idPublisherType == null)
                         {
-                            ids.Add(idPublisher.Value);
+                            idPublisherType = InsertPublisherTypeInDB(a["_type"].ToString());
+                        }
+
+                        if (idPublisherType != null)
+                        {
+                            idPublisher_PublisherType = IsPublisher_PublisherTypeInDB(idPublisher.Value, idPublisherType.Value);
+
+                            if (idPublisher_PublisherType == null)
+                            {
+                                idPublisher_PublisherType = InsertPublisher_PublisherTypeInDB(idPublisher.Value, idPublisherType.Value);
+
+                                if (idPublisher_PublisherType != null)
+                                {
+                                    ids.Add(idPublisher.Value);
+                                }
+                            }
                         }
                     }
                 }
@@ -619,7 +598,7 @@ namespace serverMedIA
         public static int? IsPublisherInDB(string name)
         {
             int? idPublisher = null;
-            string query = @"SELECT id from dbo.Publisher WHERE name = '" + name + "'";
+            string query = @"SELECT id from dbo.Publisher WHERE UPPER(name) LIKE '" + name.ToUpper() + "'";
 
             try
             {
@@ -627,7 +606,6 @@ namespace serverMedIA
 
                 if (result.Rows.Count > 0)
                 {
-                    log.Info("Publisher already in DB: " + name);
                     idPublisher = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
                 }
             }
@@ -639,11 +617,66 @@ namespace serverMedIA
             return idPublisher;
         }
 
+        public static int? IsPublisherTypeInDB(string name)
+        {
+            int? idPublisherType = null;
+            string query = @"SELECT id from dbo.PublisherType WHERE UPPER(name) LIKE '" + name.ToUpper() + "'";
+
+            try
+            {
+                DataTable result = GetDataTable(Query(query));
+
+                if (result.Rows.Count > 0)
+                {
+                    idPublisherType = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                log.Error("Error at searching publisher type: \n" + query + "\n" + e.Message);
+            }
+
+            return idPublisherType;
+        }
+
+        public static int? IsPublisher_PublisherTypeInDB(int idPublisher, int idPublisherType)
+        {
+            int? idPublisher_PublisherType = null;
+
+            StringBuilder sb = new StringBuilder(@"SELECT id from dbo.Publisher_PublisherType WHERE idPublisher = @idPublisher AND idType = @idType");
+            sb.Replace("@idPublisher", idPublisher.ToString());
+            sb.Replace("@idType", idPublisherType.ToString());
+
+            string query = sb.ToString();
+
+            try
+            {
+                DataTable result = GetDataTable(Query(query));
+
+                if (result.Rows.Count > 0)
+                {
+                    idPublisher_PublisherType = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                log.Error("Error at searching publisher_publisherType: \n" + query + "\n" + e.Message);
+            }
+
+            return idPublisher_PublisherType;
+        }
+
         public static int? InsertPublisherTypeInDB(string _type)
         {
             int? idPublisherType = null;
+
+            if (string.IsNullOrWhiteSpace(_type))
+            {
+                return idPublisherType;
+            }
+
             string query = @"INSERT INTO dbo.PublisherType (name) VALUES ('@_type') 
-                             SELECT @@IDENTITY AS 'ID' ";
+                            SELECT @@IDENTITY AS 'ID' ";
 
             StringBuilder sb = new StringBuilder(query);
             sb.Replace("@_type", _type);
@@ -652,33 +685,60 @@ namespace serverMedIA
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idPublisherType = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                log.Info("Succeded inserting PublisherType: " + idPublisherType);
             }
             catch (Exception e)
             {
                 log.Error("Error at inserting PublisherType: \n" + sb.ToString() + "\n" + e.Message);
             }
 
+
             return idPublisherType;
         }
 
-        public static int? InsertPublisherInDB(string name, int idPublisherType)
+        public static int? InsertPublisher_PublisherTypeInDB(int idPublisher, int idPublisherType)
+        {
+            int? idPublisher_PublisherType = null;
+
+            string query = @"INSERT INTO dbo.Publisher_PublisherType (idPublisher, idType) VALUES ('@idP', '@idT') 
+                            SELECT @@IDENTITY AS 'ID' ";
+
+            StringBuilder sb = new StringBuilder(query);
+            sb.Replace("@idP", idPublisher.ToString());
+            sb.Replace("@idT", idPublisherType.ToString());
+
+            try
+            {
+                DataTable result = GetDataTable(Query(sb.ToString()));
+                idPublisher_PublisherType = int.Parse(result.Rows[0].ItemArray[0].ToString());
+            }
+            catch (Exception e)
+            {
+                log.Error("Error at inserting Publisher_PublisherType: \n" + sb.ToString() + "\n" + e.Message);
+            }
+
+
+            return idPublisher_PublisherType;
+        }
+
+        public static int? InsertPublisherInDB(string name)
         {
             int? idPublisher = null;
-            string query = @"INSERT INTO dbo.Publisher (name, idType) VALUES ('@name', '@idType') 
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return idPublisher;
+            }
+
+            string query = @"INSERT INTO dbo.Publisher (name) VALUES ('@name') 
                              SELECT @@IDENTITY AS 'ID' ";
 
             StringBuilder sb = new StringBuilder(query);
             sb.Replace("@name", name);
-            sb.Replace("@idType", idPublisherType.ToString());
 
             try
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idPublisher = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                log.Info("Succeded inserting Publisher: " + idPublisher);
             }
             catch (Exception e)
             {
@@ -713,8 +773,6 @@ namespace serverMedIA
             try
             {
                 ExecuteQuery(query);
-
-                log.Info("Succeded inserting News_Publisher");
                 return true;
             }
             catch (Exception e)
@@ -771,12 +829,7 @@ namespace serverMedIA
 
                 if (result.Rows.Count > 0)
                 {
-                    log.Info("Mention already in DB: " + name);
                     idMention = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-                }
-                else
-                {
-                    log.Info("Inserting mention in DB: " + name);
                 }
             }
             catch (Exception e)
@@ -800,8 +853,6 @@ namespace serverMedIA
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idMention = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                log.Info("Succeded inserting Mention: " + idMention);
             }
             catch (Exception e)
             {
@@ -836,8 +887,6 @@ namespace serverMedIA
             try
             {
                 ExecuteQuery(query);
-
-                log.Info("Succeded inserting News_Mention");
                 return true;
             }
             catch (Exception e)
@@ -886,8 +935,6 @@ namespace serverMedIA
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idImage = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                log.Info("Succeded inserting Image: " + idImage);
             }
             catch (Exception e)
             {
@@ -899,14 +946,14 @@ namespace serverMedIA
 
         #endregion
 
+        #endregion
+
         #region Bing API Search
 
         public static string BingNewsSearch(string searchQuery)
         {
-            // Construct the URI of the search request
-            var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX" + "&freshness=Day" + "&sortBy=Date";
+            var uriQuery = URI_API_NEWS_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX" + "&freshness=Week" + "&sortBy=Date";
 
-            // Perform the Web request and get the response
             WebRequest request = HttpWebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;
             HttpWebResponse response = (HttpWebResponse)request.GetResponseAsync().Result;
@@ -917,10 +964,8 @@ namespace serverMedIA
 
         public static string BingVideoSearch(string searchQuery)
         {
-            // Construct the URI of the search request
-            var uriQuery = URI_API_VIDEOSEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_VIDEOS + "&mkt=es-MX";
+            var uriQuery = URI_API_VIDEOSEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_VIDEOS + "&mkt=es-MX" + "&freshness=Day" + "&sortBy=Date";
 
-            // Perform the Web request and get the response
             WebRequest request = HttpWebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;
             HttpWebResponse response = (HttpWebResponse)request.GetResponseAsync().Result;
@@ -929,7 +974,17 @@ namespace serverMedIA
             return json;
         }
 
-        #endregion
+        public static string BingSearch(string searchQuery)
+        {
+            var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX" + "&freshness=Week" + "&sortBy=Date";
+
+            WebRequest request = HttpWebRequest.Create(uriQuery);
+            request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;
+            HttpWebResponse response = (HttpWebResponse)request.GetResponseAsync().Result;
+            string json = new StreamReader(response.GetResponseStream()).ReadToEnd();
+
+            return json;
+        }
 
         #endregion
 
@@ -1110,7 +1165,7 @@ namespace serverMedIA
             }
             catch (Exception e)
             {
-                log.Info("Error at getting opinions : \n" + e.Message);
+                log.Error("Error at getting opinions : \n" + histogramaOpiniones + "\n" + e.Message);
             }
 
             return frecAcumulada;
@@ -1328,7 +1383,6 @@ namespace serverMedIA
             try
             {
                 DataTable idsKeyPhrases = GetDataTable(Query(queryInsertKeyPhrases.ToString()));
-
                 return true;
             }
             catch (Exception e)
@@ -1408,7 +1462,6 @@ namespace serverMedIA
                                 InsertVideoInDB(value, idPublisher, idEncoding, idCreator, ref idVideo) &&
                                 InsertVideoTermTosearchInDB(idVideo.Value, idTerm))
                             {
-                                log.Info("Video with all information inserted successfully: " + idVideo);
                                 transaction.Commit();
                             }
                             else
@@ -1441,12 +1494,7 @@ namespace serverMedIA
 
                 if (result.Rows.Count > 0)
                 {
-                    log.Info("Video already in DB: " + contentUrl);
                     idVideo = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-                }
-                else
-                {
-                    log.Info("Video does not exist in DB: " + contentUrl);
                 }
             }
             catch (Exception e)
@@ -1469,8 +1517,6 @@ namespace serverMedIA
                 if (result.Rows.Count > 0)
                 {
                     idVideoTermToSearch = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                    log.Info("Video and Term already related in DB: " + idVideoTermToSearch);
                 }
             }
             catch (Exception e)
@@ -1496,8 +1542,6 @@ namespace serverMedIA
             try
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
-
-                log.Info("Succeded inserting Video_TermToSearch");
                 return true;
             }
             catch (Exception e)
@@ -1571,9 +1615,6 @@ namespace serverMedIA
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idVideo = int.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                log.Info("Succeded inserting Video: " + idVideo);
-
                 return true;
             }
             catch (Exception e)
@@ -1643,7 +1684,7 @@ namespace serverMedIA
         public static int? IsPublisherVideoInDB(string name)
         {
             int? idPublisher = null;
-            string query = @"SELECT id from dbo.Publisher WHERE name = '" + name + "'";
+            string query = @"SELECT id from dbo.Publisher WHERE UPPER(name) LIKE '" + name.ToUpper() + "'";
 
             try
             {
@@ -1651,7 +1692,6 @@ namespace serverMedIA
 
                 if (result.Rows.Count > 0)
                 {
-                    log.Info("PublisherVideo already in DB: " + name);
                     idPublisher = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
                 }
             }
@@ -1666,7 +1706,7 @@ namespace serverMedIA
         public static int? InsertPublisherVideoInDB(string name)
         {
             int? idPublisher = null;
-            string query = @"INSERT INTO dbo.Publisher (name, idType) VALUES ('@name', NULL) 
+            string query = @"INSERT INTO dbo.Publisher (name) VALUES ('@name') 
                              SELECT @@IDENTITY AS 'ID' ";
 
             StringBuilder sb = new StringBuilder(query);
@@ -1676,8 +1716,6 @@ namespace serverMedIA
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idPublisher = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                log.Info("Succeded inserting PublisherVideo: " + idPublisher);
             }
             catch (Exception e)
             {
@@ -1729,7 +1767,6 @@ namespace serverMedIA
 
                 if (result.Rows.Count > 0)
                 {
-                    log.Info("EncodingFormat already in DB: " + name);
                     idEncoding = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
                 }
             }
@@ -1754,8 +1791,6 @@ namespace serverMedIA
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idEncoding = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                log.Info("Succeded inserting EncodingFormat: " + idEncoding);
             }
             catch (Exception e)
             {
@@ -1807,7 +1842,6 @@ namespace serverMedIA
 
                 if (result.Rows.Count > 0)
                 {
-                    log.Info("Creator already in DB: " + name);
                     idCreator = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
                 }
             }
@@ -1832,8 +1866,6 @@ namespace serverMedIA
             {
                 DataTable result = GetDataTable(Query(sb.ToString()));
                 idCreator = Int32.Parse(result.Rows[0].ItemArray[0].ToString());
-
-                log.Info("Succeded inserting Creator: " + idCreator);
             }
             catch (Exception e)
             {
@@ -1845,6 +1877,71 @@ namespace serverMedIA
 
         #endregion
 
+        #endregion
+
+        #region MainPublishers
+
+        public static void SearchMainPublishers()
+        {
+            log.Info("Opening conexion for main publishers news search...");
+            if (!OpenConection())
+            {
+                return;
+            }
+
+            var queries = GetSearchQueries();
+            
+            foreach (var query in queries)
+            {
+                log.Info("=============================" + query.Item2 + "=============================");
+
+                //json = JObject.Parse(BingSearch(query.Item2));
+
+                //log.Info(BingSearch(query.Item2));
+            }
+            
+
+            CloseConnection();
+        }
+
+        public static DataTable GetURLMainPublishers()
+        {
+            DataTable mainPublishers = null;
+
+            try
+            {
+                mainPublishers = GetDataTable(Query("SELECT idPublisher, url FROM Publisher_MainPublisher"));
+            }
+            catch (Exception e)
+            {
+                log.Error("Error at main publishers \n" + e.Message);
+            }
+            return mainPublishers;
+        }
+
+        public static List<Tuple<int, string>> GetSearchQueries()
+        {
+            DataTable termsToSearch = GetTermsToSearch();
+            DataTable mainPublishers = GetURLMainPublishers();
+
+            int idPublisher;
+            string term, url;
+            var queries = new List<Tuple<int, string>>(termsToSearch.Rows.Count * mainPublishers.Rows.Count);
+
+            foreach(DataRow rowPub in mainPublishers.Rows)
+            {
+                idPublisher = int.Parse(rowPub.ItemArray[0].ToString());
+                url = rowPub.ItemArray[1].ToString();
+
+                foreach (DataRow rowTerm in termsToSearch.Rows)
+                {
+                    term = rowTerm.ItemArray[1].ToString();
+
+                    queries.Add(new Tuple<int, string>(idPublisher, term + " " + "(site:" + url + ")"));
+                }
+            }
+            return queries;
+        }
         #endregion
 
         public static string JsonPrettyPrint(string json)

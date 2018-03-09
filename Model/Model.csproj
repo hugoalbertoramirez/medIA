@@ -55,19 +55,7 @@
     <Compile Include="Category.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="Client.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="configuration.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Consumption.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
     <Compile Include="Creator.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="database_firewall_rules.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
     <Compile Include="DB_medIA.Context.cs">
@@ -91,16 +79,7 @@
     <Compile Include="Favorite_News.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="Favorite_Tweet.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
     <Compile Include="Favorite_Video.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Group.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Group_Term.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
     <Compile Include="Image.cs">
@@ -109,13 +88,7 @@
     <Compile Include="KeyPhrase.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="License.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
     <Compile Include="Mention.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="minimum_tweets.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
     <Compile Include="News.cs">
@@ -145,21 +118,6 @@
     <Compile Include="OpinionLimit.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="Period.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Permission.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Plan.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Plan_Product.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Product.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Publisher.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
@@ -170,46 +128,10 @@
     <Compile Include="Publisher_State.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="Role.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Role_Permission.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Sector.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ssas_jobs.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
     <Compile Include="State.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="Status.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sysdiagram.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
     <Compile Include="TermToSearch.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="tweets_normalized.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="tweets_processed.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="twitter_query.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="twitter_query_details.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="twitter_query_readable.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="User.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
     <Compile Include="User_Video.cs">
@@ -230,67 +152,32 @@
     <Compile Include="Video_TermToSearch.cs">
       <DependentUpon>DB_medIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="vw_configuration.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vw_Fuente.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vw_Group_Term.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vw_HistogramOpinions.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vw_KeyPhrase.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vw_minimum_tweets.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vw_news.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vw_tweets_normalized.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vw_tweets_processed.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vw_User_Video.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="vw_Video.cs">
-      <DependentUpon>DB_medIA.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.Config" />
     <EntityDeploy Include="DB_medIA.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>DB_medIA.Designer.cs</LastGenOutput>
     </EntityDeploy>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.Config" />
     <None Include="DB_medIA.edmx.diagram">
       <DependentUpon>DB_medIA.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="DB_medIA.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DB_medIA.Context.cs</LastGenOutput>
       <DependentUpon>DB_medIA.edmx</DependentUpon>
+      <LastGenOutput>DB_medIA.Context.cs</LastGenOutput>
     </Content>
     <Content Include="DB_medIA.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>DB_medIA.edmx</DependentUpon>
       <LastGenOutput>DB_medIA.cs</LastGenOutput>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
