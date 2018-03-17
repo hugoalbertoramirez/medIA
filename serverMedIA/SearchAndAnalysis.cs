@@ -138,7 +138,7 @@ namespace serverMedIA
                     idTerm = Int32.Parse(row.ItemArray[0].ToString());
                     term = row.ItemArray[1].ToString();
 
-                    log.Info("\n\n>>>>>>>>>>>>>>>>>>>>>Searching news for '" + term + "' <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                    log.Info(" >> Searching news for '" + term + "'");
 
                     json = JObject.Parse(BingNewsSearch(term));
 
@@ -976,7 +976,7 @@ namespace serverMedIA
 
         public static string BingSearch(string searchQuery)
         {
-            var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX" + "&freshness=Week" + "&sortBy=Date";
+            var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX" +  "&sortBy=Date"; // "&freshness=Week" +
 
             WebRequest request = HttpWebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;
@@ -1396,7 +1396,7 @@ namespace serverMedIA
 
         #endregion
 
-        #region videos
+        #region Videos
 
         public static void SearchVideos()
         {
@@ -1890,14 +1890,26 @@ namespace serverMedIA
             }
 
             var queries = GetSearchQueries();
-            
+            JObject json;
+            JToken webPages;
+
+            string querySearch;
+
             foreach (var query in queries)
             {
-                log.Info("=============================" + query.Item2 + "=============================");
+                querySearch = query.Item2;
 
-                //json = JObject.Parse(BingSearch(query.Item2));
+                log.Info(" >> " + querySearch);
 
-                //log.Info(BingSearch(query.Item2));
+                json = JObject.Parse(BingSearch(querySearch));
+                webPages = json["webPages"];
+
+                foreach (var value in webPages["value"])
+                {
+                    log.Info(value.ToString());
+
+
+                }
             }
             
 
@@ -1942,6 +1954,7 @@ namespace serverMedIA
             }
             return queries;
         }
+
         #endregion
 
         public static string JsonPrettyPrint(string json)
