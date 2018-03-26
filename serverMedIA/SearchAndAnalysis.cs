@@ -19,7 +19,6 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Configuration;
 
-using Model;
 
 namespace serverMedIA
 {
