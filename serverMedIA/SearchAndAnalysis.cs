@@ -28,7 +28,7 @@ namespace serverMedIA
         public static string API_SEARCH_KEY = ConfigurationManager.ConnectionStrings["API_SEARCH_KEY"].ConnectionString;
         public static string URI_API_NEWS_SEARCH_KEY = ConfigurationManager.ConnectionStrings["URI_API_NEWS_SEARCH_KEY"].ConnectionString;
         public static int MAX_NUMBER_NEWS = Int32.Parse(ConfigurationManager.ConnectionStrings["MAX_NUMBER_NEWS"].ConnectionString);
-        public static string SQLDB_CONNECTION = ConfigurationManager.ConnectionStrings["SQLDB_CONNECTION_DEV"].ConnectionString;
+        public static string SQLDB_CONNECTION = ConfigurationManager.ConnectionStrings["SQLDB_CONNECTION_PRU"].ConnectionString;
         public static string API_TEXT_ANALITICS_KEY = ConfigurationManager.ConnectionStrings["API_TEXT_ANALITICS_KEY"].ConnectionString;
         public static string URI_API_TEXT_ANALITICS = ConfigurationManager.ConnectionStrings["URI_API_TEXT_ANALITICS"].ConnectionString;
         public static int MAX_NUMBER_OPINION = Int32.Parse(ConfigurationManager.ConnectionStrings["MAX_NUMBER_OPINION"].ConnectionString);
@@ -47,7 +47,7 @@ namespace serverMedIA
         {
             log = _log;
 
-            log.Info("function app working >>");
+            log.Info("Function app working >>");
 
             SearchMainPublishers();
 
@@ -199,7 +199,7 @@ namespace serverMedIA
 
             try
             {
-                termsToSearch = GetDataTable(Query("SELECT id, term FROM TermToSearch"));
+                termsToSearch = GetDataTable(Query("SELECT id, term FROM TermToSearch WHERE status = 1"));
             }
             catch (Exception e)
             {
@@ -298,10 +298,12 @@ namespace serverMedIA
 
         public static bool InsertNewsInDB(JToken value, int? idCategory, ref int? idNews)
         {
-            string datePublished = DateTime.Parse(value["datePublished"].ToString()).ToString("yyyy-MM-dd hh:mm:ss");
+            string datePublished = DateTime.Parse(value["datePublished"].ToString()).ToString("yyyy-MM-dd hh:mm:ss"); //////
             string name = value["name"].ToString().Replace("'", "");
             string url = value["url"].ToString();
-            string description = value["description"].ToString().Replace("'", "");
+            string description = value["description"] != null ? 
+                                 value["description"].ToString().Replace("'", "") :
+                                 value["snippet"].ToString().Replace("'", "");
 
             string query = @"INSERT INTO News.News (idCategory,datePublished,name,url,description) VALUES 
                              (@idCategory, '@datePublished', '@name', '@url', '@description')
@@ -1893,21 +1895,66 @@ namespace serverMedIA
             JToken webPages;
 
             string querySearch;
+            int? idNews;
+            int idPublisher, idTerm;
 
             foreach (var query in queries)
             {
-                querySearch = query.Item2;
+                idPublisher = query.Item1;
+                idTerm = query.Item2;
+                querySearch = query.Item3;
 
                 log.Info(" >> " + querySearch);
 
                 json = JObject.Parse(BingSearch(querySearch));
                 webPages = json["webPages"];
 
-                foreach (var value in webPages["value"])
+                if (webPages != null)
                 {
-                    log.Info(value.ToString());
+                    foreach (var value in webPages["value"])
+                    {
+                        transaction = connection.BeginTransaction("Check News");
 
+                        log.Info(value.ToString());
 
+                        idNews = IsNewsInDB(value["url"].ToString());
+
+                        if (idNews != null)
+                        {
+                            if (InsertNewsTermTosearchInDB(idNews.Value, idTerm))
+                            {
+                                transaction.Commit();
+                                continue;
+                            }
+                            else
+                            {
+                                transaction.Rollback();
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            transaction.Commit();
+                        }
+
+                        if (idNews == null)
+                        {
+                            transaction = connection.BeginTransaction("Insert News");
+
+                            if (InsertNewsInDB(value, null, ref idNews) &&
+                                InsertNewsTermTosearchInDB(idNews.Value, idTerm) &&
+                                InsertNewsPublisherInDB(new List<int> { idPublisher }, idNews.Value))
+                            {
+                                transaction.Commit();
+                            }
+                            else
+                            {
+                                transaction.Rollback();
+                                continue;
+                            }
+                        }
+
+                    }
                 }
             }
             
@@ -1921,23 +1968,23 @@ namespace serverMedIA
 
             try
             {
-                mainPublishers = GetDataTable(Query("SELECT idPublisher, url FROM Publisher_MainPublisher"));
+                mainPublishers = GetDataTable(Query("SELECT idPublisher, url FROM MainPublisher WHERE status = 1"));
             }
             catch (Exception e)
             {
-                log.Error("Error at main publishers \n" + e.Message);
+                log.Error("Error at getting main publishers \n" + e.Message);
             }
             return mainPublishers;
         }
 
-        public static List<Tuple<int, string>> GetSearchQueries()
+        public static List<Tuple<int, int, string>> GetSearchQueries()
         {
             DataTable termsToSearch = GetTermsToSearch();
             DataTable mainPublishers = GetURLMainPublishers();
 
-            int idPublisher;
+            int idPublisher, idTerm;
             string term, url;
-            var queries = new List<Tuple<int, string>>(termsToSearch.Rows.Count * mainPublishers.Rows.Count);
+            var queries = new List<Tuple<int, int, string>>(termsToSearch.Rows.Count * mainPublishers.Rows.Count);
 
             foreach(DataRow rowPub in mainPublishers.Rows)
             {
@@ -1946,9 +1993,10 @@ namespace serverMedIA
 
                 foreach (DataRow rowTerm in termsToSearch.Rows)
                 {
+                    idTerm = int.Parse(rowTerm.ItemArray[0].ToString());
                     term = rowTerm.ItemArray[1].ToString();
 
-                    queries.Add(new Tuple<int, string>(idPublisher, term + " " + "(site:" + url + ")"));
+                    queries.Add(new Tuple<int, int, string>(idPublisher, idTerm, term + " " + "(site:" + url + ")"));
                 }
             }
             return queries;
