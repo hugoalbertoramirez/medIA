@@ -19,16 +19,14 @@ using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Configuration;
 
-
 namespace serverMedIA
 {
     public static class SearchAndAnalysis
     {
-        // modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         public static string API_SEARCH_KEY = ConfigurationManager.ConnectionStrings["API_SEARCH_KEY"].ConnectionString;
         public static string URI_API_NEWS_SEARCH_KEY = ConfigurationManager.ConnectionStrings["URI_API_NEWS_SEARCH_KEY"].ConnectionString;
         public static int MAX_NUMBER_NEWS = Int32.Parse(ConfigurationManager.ConnectionStrings["MAX_NUMBER_NEWS"].ConnectionString);
-        public static string SQLDB_CONNECTION = ConfigurationManager.ConnectionStrings["SQLDB_CONNECTION_PRU"].ConnectionString;
+        public static string SQLDB_CONNECTION = ConfigurationManager.ConnectionStrings["SQLDB_CONNECTION_PROD"].ConnectionString;
         public static string API_TEXT_ANALITICS_KEY = ConfigurationManager.ConnectionStrings["API_TEXT_ANALITICS_KEY"].ConnectionString;
         public static string URI_API_TEXT_ANALITICS = ConfigurationManager.ConnectionStrings["URI_API_TEXT_ANALITICS"].ConnectionString;
         public static int MAX_NUMBER_OPINION = Int32.Parse(ConfigurationManager.ConnectionStrings["MAX_NUMBER_OPINION"].ConnectionString);
@@ -49,15 +47,13 @@ namespace serverMedIA
 
             log.Info("Function app working >>");
 
-            SearchMainPublishers();
+            SearchNews();
 
-            //SearchNews();
+            ExtractOpinionsFromNews();
 
-            //ExtractOpinionsFromNews();
+            ExtractKeyPhrasesFromNews();
 
-            //ExtractKeyPhrasesFromNews();
-
-            //SearchVideos();
+            SearchVideos();
         }
 
         #region SQL objects
@@ -136,9 +132,7 @@ namespace serverMedIA
                 {
                     idTerm = Int32.Parse(row.ItemArray[0].ToString());
                     term = row.ItemArray[1].ToString();
-
-                    log.Info(" >> Searching news for '" + term + "'");
-
+                    
                     json = JObject.Parse(BingNewsSearch(term));
 
                     foreach (var value in json["value"])
@@ -298,7 +292,7 @@ namespace serverMedIA
 
         public static bool InsertNewsInDB(JToken value, int? idCategory, ref int? idNews)
         {
-            string datePublished = DateTime.Parse(value["datePublished"].ToString()).ToString("yyyy-MM-dd hh:mm:ss"); //////
+            string datePublished = value["datePublished"] != null ? DateTime.Parse(value["datePublished"].ToString()).ToString("yyyy-MM-dd hh:mm:ss") : null;
             string name = value["name"].ToString().Replace("'", "");
             string url = value["url"].ToString();
             string description = value["description"] != null ? 
@@ -306,12 +300,12 @@ namespace serverMedIA
                                  value["snippet"].ToString().Replace("'", "");
 
             string query = @"INSERT INTO News.News (idCategory,datePublished,name,url,description) VALUES 
-                             (@idCategory, '@datePublished', '@name', '@url', '@description')
+                             (@idCategory, @datePublished, '@name', '@url', '@description')
                              SELECT @@IDENTITY AS 'ID'";
 
             StringBuilder sb = new StringBuilder(query);
             sb.Replace("@idCategory", idCategory.HasValue ? "'" + idCategory.Value + "'" : "NULL");
-            sb.Replace("@datePublished", datePublished);
+            sb.Replace("@datePublished", datePublished != null ? "'" + datePublished + "'" : "NULL");
             sb.Replace("@name", name);
             sb.Replace("@url", url);
             sb.Replace("@description", description);
@@ -977,7 +971,7 @@ namespace serverMedIA
 
         public static string BingSearch(string searchQuery)
         {
-            var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX" +  "&sortBy=Date"; // "&freshness=Week" +
+            var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&sortBy=Date"; 
 
             WebRequest request = HttpWebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;
@@ -1877,130 +1871,6 @@ namespace serverMedIA
         }
 
         #endregion
-
-        #endregion
-
-        #region MainPublishers
-
-        public static void SearchMainPublishers()
-        {
-            log.Info("Opening conexion for main publishers news search...");
-            if (!OpenConection())
-            {
-                return;
-            }
-
-            var queries = GetSearchQueries();
-            JObject json;
-            JToken webPages;
-
-            string querySearch;
-            int? idNews;
-            int idPublisher, idTerm;
-
-            foreach (var query in queries)
-            {
-                idPublisher = query.Item1;
-                idTerm = query.Item2;
-                querySearch = query.Item3;
-
-                log.Info(" >> " + querySearch);
-
-                json = JObject.Parse(BingSearch(querySearch));
-                webPages = json["webPages"];
-
-                if (webPages != null)
-                {
-                    foreach (var value in webPages["value"])
-                    {
-                        transaction = connection.BeginTransaction("Check News");
-
-                        log.Info(value.ToString());
-
-                        idNews = IsNewsInDB(value["url"].ToString());
-
-                        if (idNews != null)
-                        {
-                            if (InsertNewsTermTosearchInDB(idNews.Value, idTerm))
-                            {
-                                transaction.Commit();
-                                continue;
-                            }
-                            else
-                            {
-                                transaction.Rollback();
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            transaction.Commit();
-                        }
-
-                        if (idNews == null)
-                        {
-                            transaction = connection.BeginTransaction("Insert News");
-
-                            if (InsertNewsInDB(value, null, ref idNews) &&
-                                InsertNewsTermTosearchInDB(idNews.Value, idTerm) &&
-                                InsertNewsPublisherInDB(new List<int> { idPublisher }, idNews.Value))
-                            {
-                                transaction.Commit();
-                            }
-                            else
-                            {
-                                transaction.Rollback();
-                                continue;
-                            }
-                        }
-
-                    }
-                }
-            }
-            
-
-            CloseConnection();
-        }
-
-        public static DataTable GetURLMainPublishers()
-        {
-            DataTable mainPublishers = null;
-
-            try
-            {
-                mainPublishers = GetDataTable(Query("SELECT idPublisher, url FROM MainPublisher WHERE status = 1"));
-            }
-            catch (Exception e)
-            {
-                log.Error("Error at getting main publishers \n" + e.Message);
-            }
-            return mainPublishers;
-        }
-
-        public static List<Tuple<int, int, string>> GetSearchQueries()
-        {
-            DataTable termsToSearch = GetTermsToSearch();
-            DataTable mainPublishers = GetURLMainPublishers();
-
-            int idPublisher, idTerm;
-            string term, url;
-            var queries = new List<Tuple<int, int, string>>(termsToSearch.Rows.Count * mainPublishers.Rows.Count);
-
-            foreach(DataRow rowPub in mainPublishers.Rows)
-            {
-                idPublisher = int.Parse(rowPub.ItemArray[0].ToString());
-                url = rowPub.ItemArray[1].ToString();
-
-                foreach (DataRow rowTerm in termsToSearch.Rows)
-                {
-                    idTerm = int.Parse(rowTerm.ItemArray[0].ToString());
-                    term = rowTerm.ItemArray[1].ToString();
-
-                    queries.Add(new Tuple<int, int, string>(idPublisher, idTerm, term + " " + "(site:" + url + ")"));
-                }
-            }
-            return queries;
-        }
 
         #endregion
 
