@@ -39,16 +39,16 @@ namespace serverMedIAMP
         public static SqlTransaction transaction;
         public static TraceWriter log;
 
-        [FunctionName("MainPublishersAnalysis")]
-        public static void Run([TimerTrigger("* * * * * *")]TimerInfo myTimer, TraceWriter _log)
+        [FunctionName("MainPublishersAnalysis")] // 0 0 1/2 1/1 * *
+        public static void Run([TimerTrigger("0 0 1/2 1/1 * *")]TimerInfo myTimer, TraceWriter _log)
         {
             log = _log;
 
             log.Info("Function app working >>");
 
-            FixNews();
+            //FixNews();
 
-            //SearchMainPublishers();
+            SearchMainPublishers();
         }
 
         #region SQL objects
@@ -119,7 +119,7 @@ namespace serverMedIAMP
             int idPublisher;
             string url;
 
-            foreach (DataRow row in newsToFix.Rows)
+            foreach (DataRow row in newsToFix.Rows) //
             {
                 idNews = int.Parse(row.ItemArray[0].ToString());
                 idPublisher = int.Parse(row.ItemArray[1].ToString());
@@ -142,9 +142,15 @@ namespace serverMedIAMP
 
             try
             {
-                result = GetDataTable(Query(@"SELECT N.id, NP.idPublisher, N.url FROM News.News N
-		                                      INNER JOIN News.News_Publisher NP ON N.id = NP.idNews
-		                                      WHERE YEAR(datePublished) = 1900"));
+                result = GetDataTable(Query(@"SELECT N.id, NP.idPublisher, N.url FROM News.News N 
+                                            INNER JOIN News.News_Publisher NP ON N.id = NP.idNews
+                                            WHERE 
+	
+	                                            (
+		                                            YEAR(datePublished) = 1900 OR 
+		                                            (DATEPART(HOUR, datePublished) = 0 AND DATEPART(MINUTE, datePublished) = 0) 
+	                                            )
+	                                        AND N.status = 1"));
             }
             catch (Exception e)
             {
@@ -245,7 +251,7 @@ namespace serverMedIAMP
 
             try
             {
-                termsToSearch = GetDataTable(Query("SELECT id, term FROM TermToSearch WHERE status = 1"));
+                termsToSearch = GetDataTable(Query("SELECT id, term FROM TermToSearch WHERE istrending = 1 AND status = 1"));
             }
             catch (Exception e)
             {
@@ -318,13 +324,20 @@ namespace serverMedIAMP
         {
             DateTime? dateInDB = GetDate(idNews);
 
-            if ((dateInDB.HasValue && dateInDB.Value.Year == 1900) || !dateInDB.HasValue) // error de bing search API
+            if ((dateInDB.HasValue && dateInDB.Value.Year == 1900) || 
+                (dateInDB.HasValue && dateInDB.Value.Hour == 0 && dateInDB.Value.Minute == 0) ||
+                !dateInDB.HasValue) // error de bing search API
             {
                 DateTime? datePublished = GetDateFromUrl(url, idPublisher);
 
                 if (datePublished != null)
                 {
+                    log.Info("Processing idNews:" + idNews + " " + datePublished.ToString());
                     UpdateNewsDateInDB(datePublished.Value, idNews);
+                }
+                else
+                {
+
                 }
             }
         }
@@ -373,9 +386,7 @@ namespace serverMedIAMP
 
         public static void AddFullTextInDB(int idNews, int idPublisher, string url)
         {
-            string textInDB = GetText(idNews);
-
-            if (string.IsNullOrEmpty(textInDB))
+            if (!HasText(idNews))
             {
                 string text = GetTextFromUrl(url, idPublisher);
 
@@ -386,26 +397,26 @@ namespace serverMedIAMP
             }
         }
 
-        public static string GetText(int idNews)
+        public static bool HasText(int idNews)
         {
-            string text = null;
+            int? hasText = null;
 
             try
             {
-                DataTable result = GetDataTable(Query("SELECT text FROM News.News WHERE id = " + idNews));
+                DataTable result = GetDataTable(Query("SELECT CASE WHEN text <> '' THEN 1 ELSE 0 END FROM News.News WHERE id = " + idNews));
 
                 if (result.Rows.Count > 0)
                 {
-                    text = result.Rows[0].ItemArray[0].ToString();
+                    hasText = int.Parse(result.Rows[0].ItemArray[0].ToString());
 
-                    return text;
+                    return hasText == 1;
                 }
             }
             catch (Exception e)
             {
                 log.Error("Error at getting text from idNews: " + idNews + "\n" + e.Message);
             }
-            return text;
+            return false;
         }
 
         public static bool UpdateNewsTextInDB(string text, int idNews)
@@ -461,7 +472,7 @@ namespace serverMedIAMP
                                  value["description"].ToString().Replace("'", "") :
                                  value["snippet"].ToString().Replace("'", "");
 
-            if (datePublished == null)
+            if (datePublished == null && !string.IsNullOrEmpty(url))
             {
                 DateTime? date = GetDateFromUrl(url, idPublisher);
 
@@ -567,22 +578,201 @@ namespace serverMedIAMP
         {
             DateTime? date = null;
 
+            try
+            {
+                switch (idPublisher)
+                {
+                    case 1532:
+                        //El universal
+                        date = GetDate("div", "class", "fechap", url);
+
+                        //if (date == null)
+                        //{
+                        //    date = GetDate("span", "class", "field-content", url);
+                        //}
+                        return (date);
+
+                    case 1648:
+                        //Animal politico
+                        date = GetDate("strong", "class", "entry-published", url);
+                        return date;
+
+                    case 2254:
+                        //Noticiero Televisa
+                        date = GetDate("div", "class", "fechap", url);
+                        return date;
+
+                    case 2074:
+                        //milenio
+                        date = GetDate("time", "itemprop", "datePublished", url);
+
+                        return date;
+
+                    case 2064: //4174
+                               //Aristegui
+                        date = GetDate("div", "class", "share_publicado", url);
+                        return date;
+
+                    case 2080:
+                        //Sin embargo
+                        date = SinEmbargoDate("time", url);
+                        return date;
+                    case 2079:
+                        //sdp noticias
+                        date = fechaNoticiaSdp(url);
+                        return date;
+                    case 2063:
+                        //animal politico
+                        date = GetDate("strong", "class", "entry-published", url);
+                        return date;
+
+
+                    case 1636:
+                        //la jornada
+
+                        if (url.Contains("ultimas"))
+                        {
+                            date = GetDate("span", "class", "nitf_date", url);
+                            return date;
+
+                        }
+                        else
+                        {
+                            date = GetDate("div", "class", "hemero", url);
+                            return date;
+                        }
+
+
+                    case 2058:
+                        //Radio Formula
+
+                        date = GetDate("p", "class", "posted", url);
+                        return date;
+
+                    case 1885:
+                        //W radio
+                        date = WradioDate("span", "itemprop", "dateModified", url);
+                        return date;
+                    case 2108:
+                        //Notimex
+                        date = NotimexDate("div", "class", "general", url);
+                        return date;
+
+
+                    case 1525:
+                        //El economista
+                        date = GetDate("time", "class", "entry-time", url);
+                        return date;
+
+                    default:
+                        log.Error("Didnt found parser for publisher " + idPublisher);
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                log.Error("Error at converting string to date \n" + e.Message);
+            }
+
+            return date;
+        }
+
+        public static DateTime fechaNoticiaSdp(String url)
+        {
+            var html = url;
+            HtmlWeb web = new HtmlWeb();
+            var htmlDoc = web.Load(html);
+
+            var root = htmlDoc.DocumentNode;
+            var content = root.SelectSingleNode("//span[@class='fecha']");
+
+            var innertext = content.InnerText;
+
+            var date = innertext.ToString();
+
+
+            String regex = "\\b((?<diasem>\\w(.*))\\s(?<diames>\\d{1,2})\\s(?<mes>\\w(.*))\\s(?<year>\\d{1,4})\\s(?<hora>\\w(.*)))";
+
+            var replace = Regex.Replace(date, regex, "${diames}/${mes}/${year} ${hora}", RegexOptions.None, TimeSpan.FromMilliseconds(150));
+            DateTime dateTime = Convert.ToDateTime(replace);
+
+
+            return dateTime;
+        }
+
+        public static DateTime SinEmbargoDate(String nombreTag, String url)
+        {
+            var html = url;
+            HtmlWeb web = new HtmlWeb();
+            var htmlDoc = web.Load(html);
+            var root = htmlDoc.DocumentNode;
+            var content = root.SelectNodes("//" + nombreTag);
+            var dateOfNew = content[0].InnerHtml;
+            var hour = content[1].InnerHtml;
+
+            string completeDate = dateOfNew + " " + hour;
+            var date = Convert.ToDateTime(completeDate);
+
+            return date;
+        }
+
+        public static DateTime WradioDate(String nTag, String attributeD, String idTituloF, String url)
+        {
+            var html = url;
+            HtmlWeb web = new HtmlWeb();
+            var htmlDoc = web.Load(html);
+            var root = htmlDoc.DocumentNode;
+            var content = root.Descendants(nTag).Where(n => n.GetAttributeValue(attributeD, "").Equals(idTituloF)).Single();
+
+            var innertext = content.InnerText;
+            var dateString = innertext.ToString();
+            var dateS = dateString.Replace("-", "");
+            var dateSubstring = dateS.Substring(0, dateS.IndexOf("C") - 1);
+
+            DateTime datef = Convert.ToDateTime(dateSubstring);
+
+            return datef;
+
+        }
+
+        public static DateTime NotimexDate(String nTag, String attributeD, String idTituloF, String url)
+        {
+            var html = url;
+            HtmlWeb web = new HtmlWeb();
+            var htmlDoc = web.Load(html);
+            var root = htmlDoc.DocumentNode;
+            var content = root.Descendants(nTag).Where(n => n.GetAttributeValue(attributeD, "").Equals(idTituloF)).Single();//no funciona con singleordefault
+            var innertext = content.InnerText;
+            var dsub = innertext.Substring(47, 27);
+            string day = dsub.Substring(0, 10);
+            string hour = dsub.Substring(19, 8);
+            string date1 = string.Concat(day + " " + hour);
+
+            DateTime dateF = Convert.ToDateTime(date1);
+            return dateF;
+
+        }
+
+        public static DateTime? GetTimeFromUrl(string url, int idPublisher)
+        {
+            DateTime? date = null;
+
             switch (idPublisher)
             {
                 case 1532: //El universal 
-                    date = GetDate("div", "class", "fechap", url);
+                    date = GetTime("div", "class", "hora", url);
                     break;
-                case 1648: //Animal politico
-                    date = GetDate("strong", "class", "entry-published", url);
-                    break;
-                case 2254: //Noticiero Televisa
-                    date = fechaTelevisa(url);
-                    break;
-                case 2074: //milenio
-                    date = GetDate("time", "itemprop", "datePublished", url);
-                    break;
+                //case 1648: //Animal politico
+                //    date = GetDate("strong", "class", "entry-published", url);
+                //    break;
+                //case 2254: //Noticiero Televisa
+                //    date = fechaTelevisa(url);
+                //    break;
+                //case 2074: //milenio
+                //    date = GetDate("time", "itemprop", "datePublished", url);
+                //    break;
                 default:
-                    log.Info("Not found date from " + url);
+                    log.Info("Not found time from " + url);
                     break;
             }
             return date;
@@ -590,41 +780,191 @@ namespace serverMedIAMP
 
         public static string GetTextFromUrl(string url, int idPublisher)
         {
-            string text = null;
+            string news;
 
             switch (idPublisher)
             {
-                case 1532: //El universal 
-                    text = GetFullText("div", "class", "field field-name-body field-type-text-with-summary field-label-hidden", url);
-                    break;
-                case 1648: //Animal politico
-                    text = GetFullText("section", "class", "entry-content", url);
-                    break;
-                case 2254: //Noticiero Televisa
-                    text = GetFullText("div", "itemprop", "articleBody", url);
-                    break;
-                case 2074: //milenio
-                    text = GetFullText("div", "itemprop", "articleBody", url);
-                    break;
+                case 1532:
+                    //El universal
+                    news = GetFullText("div", "class", "field field-name-body field-type-text-with-summary field-label-hidden", url);
+                    return news;
+
+                case 1648:
+                    //Animal politico
+                    news = GetFullText("section", "class", "entry-content", url);
+
+                    return news;
+
+                case 2254:
+                    //Noticiero Televisa
+                    news = GetFullText("div", "itemprop", "articleBody", url); ;
+                    return news;
+
+                case 2074:
+                    //milenio
+                    news = GetFullText("div", "itemprop", "articleBody", url);
+
+                    return news;
+
+                case 2064: //4174
+                           //Aristegui
+                    news = GetFullText("div", "class", "class_text", url);
+                    return news;
+
+                case 2080:
+                    //Sin embargo
+                    news = GetFullText("section", "class", "post-content", url);
+                    return news;
+                case 2079:
+                    //sdp noticias
+                    news = GetFullText("div", "class", "cont-cuerpo", url);
+                    return news;
+                case 2063:
+                    //animal politico
+                    news = GetFullText("section", "class", "entry-content", url); ;
+                    return news;
+
+
+                case 1636:
+                    //la jornada
+
+                    if (url.Contains("ultimas"))
+                    {
+                        news = GetFullText("div", "id", "content_nitf", url);
+                        return news;
+
+                    }
+                    else
+                    {
+                        news = GetFullText("div", "id", "article-text", url); ;
+                        return news;
+                    }
+
+
+                case 2058:
+                    //Radio Formula
+
+                    news = GetFullText("div", "class", "span12 nota", url); ;
+                    return news;
+
+                case 1885:
+                    //W radio
+                    news = GetFullText("div", "id", "cuerpo_noticia_r", url);
+                    return news;
+                case 2108:
+                    //Notimex
+                    news = GetFullText("div", "class", "desarrollo", url);
+                    return news;
+
+                case 1525:
+                    //El economista
+                    news = GetFullText("div", "class", "entry-body", url);
+                    return news;
+
                 default:
-                    log.Info("Not found text from " + url);
-                    break;
+                    log.Error("Can get full text from url " + url);
+                    return null;
             }
-            return text;
         }
 
-        public static DateTime? GetDate(string nameTag, string attributeD, string idTitleF, string url)
+        public static DateTime? GetDate(string nameTag, string attributeD, string idTitle, string url)
         {
             var html = url;
             HtmlWeb web = new HtmlWeb();
             var htmlDoc = web.Load(html);
             var root = htmlDoc.DocumentNode;
-            var fecha = root.Descendants().Where(n => n.GetAttributeValue(attributeD, "").Equals(idTitleF)).SingleOrDefault();
+            var content = root.Descendants().Where(n => n.GetAttributeValue(attributeD, "").Equals(idTitle)).FirstOrDefault();
+            if (content == null || content.InnerHtml == null)
+            {
+                return null;
+            }
+
+            var innerText = content.InnerText;
+            string dateString = innerText.ToString();
+
+            DateTime dateTime;
+            if (html.Contains("eluniversal.com.mx"))
+            {
+                var contentHour = root.Descendants("div").Where(n => n.GetAttributeValue("class", "").Equals("hora")).SingleOrDefault();
+                var innerTextHour = contentHour.InnerText;
+                string stringHour = innerTextHour.ToString();
+                string stringUniversal = dateString + " " + stringHour;
+
+                DateTime? finalTime = null;
+                DateTime? finalDate = null;
+                try
+                {
+                    finalTime = DateTime.ParseExact(stringHour, "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                catch (Exception e)
+                {
+                    log.Error("Cant parse string to Time " + stringHour);
+                }
+
+                try
+                {
+                    finalDate = DateTime.ParseExact(dateString, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                }
+                catch (Exception e)
+                {
+                    log.Error("Cant parse string to Time " + dateString);
+                }
+
+                if (finalDate != null && finalTime != null)
+                {
+                    finalDate = new DateTime(finalDate.Value.Year, finalDate.Value.Month, finalDate.Value.Day, finalTime.Value.Hour, finalTime.Value.Minute, finalTime.Value.Second);
+                }
+
+                return finalDate;
+            }
+
+            if (DateTime.TryParse(dateString, out dateTime))
+            {
+                return dateTime;
+
+            }
+            else if (DateTime.TryParseExact(dateString, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dateTime))
+            {
+
+                return dateTime;
+
+            }
+
+            if (innerText.Contains("|"))
+            {
+                string[] words = innerText.Split('|');
+                string subString = words[3].Substring(0, 28);
+
+                dateTime = Convert.ToDateTime(subString);
+                return dateTime;
+            }
+            if (innerText.Contains("Periódico La Jornada"))
+            {
+                string replace = innerText.Replace("Periódico La Jornada", "");
+                string subString = replace.Substring(0, replace.LastIndexOf(","));
+
+                String regex = "\\b((?<diasem>\\w(.*))\\s(?<diames>\\d{1,2})\\s(?<mes>\\w(.*))\\s(?<year>\\d{1,4})\\s(?<hora>\\w(.*)))";
+
+                var conversion = Regex.Replace(subString, regex, "${diames}/${mes}/${year} ${hora}", RegexOptions.None, TimeSpan.FromMilliseconds(150));
+                dateTime = Convert.ToDateTime(conversion);
+                return dateTime;
+
+            }
+            return dateTime;
+
+        }
+
+        public static DateTime? GetTime(string nameTag, string attributeD, string idTitleF, string url)
+        {
+            var html = url;
+            HtmlWeb web = new HtmlWeb();
+            var htmlDoc = web.Load(html);
+            var root = htmlDoc.DocumentNode;
+            var fecha = root.Descendants().Where(n => n.GetAttributeValue(attributeD, "").Equals(idTitleF)).Single();
 
             if (fecha != null)
             {
-
-                var date = fecha.InnerText;
+                var date = fecha.InnerText.Trim();
                 var date3 = date.ToString();
 
                 DateTime fechatime;
@@ -637,16 +977,24 @@ namespace serverMedIAMP
                 {
                     try
                     {
-                        string exp3 = "\\b((?<diasem>\\w(.*))\\s(?<diames>\\d{1,2})\\s(?<mes>\\w(.*))\\s(?<year>\\d{1,4})\\s(?<hora>\\w(.*)))";
-                        var fe = Regex.Replace(date3, exp3, "${diames}/${mes}/${year} ${hora}", RegexOptions.None, TimeSpan.FromMilliseconds(150));
-                        DateTime fechaf = Convert.ToDateTime(fe);
-
-                        return fechaf;
+                        DateTime myDate = DateTime.ParseExact(date3, "HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+                        return myDate;
                     }
-                    catch (Exception e)
+                    catch
                     {
-                        log.Error("No se pudo transformar el date " + fecha + "\n" + e.Message);
-                        return null;
+                        try
+                        {
+                            string exp3 = "\\b((?<diasem>\\w(.*))\\s(?<diames>\\d{1,2})\\s(?<mes>\\w(.*))\\s(?<year>\\d{1,4})\\s(?<hora>\\w(.*)))";
+                            var fe = Regex.Replace(date3, exp3, "${diames}/${mes}/${year} ${hora}", RegexOptions.None, TimeSpan.FromMilliseconds(150));
+                            DateTime fechaf = Convert.ToDateTime(fe);
+
+                            return fechaf;
+                        }
+                        catch (Exception e)
+                        {
+                            log.Error("No se pudo transformar el date " + fecha + "\n" + e.Message);
+                            return null;
+                        }
                     }
                 }
             }
@@ -684,7 +1032,7 @@ namespace serverMedIAMP
             {
                 var newsB = WebUtility.HtmlDecode(noticiaCuerpo.InnerText);
                 var noticiaB = newsB.ToString();
-                return noticiaB;
+                return noticiaB.Replace("'", "");
             }
             return null;
         }

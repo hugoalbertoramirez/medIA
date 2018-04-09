@@ -41,7 +41,7 @@ namespace serverMedIA
         public static TraceWriter log;
 
         [FunctionName("SearchAndAnalysis")] // 0 0 0/2 * * *
-        public static void Run([TimerTrigger("* * * * * *")]TimerInfo myTimer, TraceWriter _log)
+        public static void Run([TimerTrigger("0 0 0/2 * * *")]TimerInfo myTimer, TraceWriter _log)
         {
             log = _log;
 
@@ -1289,6 +1289,11 @@ namespace serverMedIA
 
         public static bool InsertKeyPhrasesInDB(IList<string> keyPhrases)
         {
+            if (keyPhrases.Count == 0)
+            {
+                return false;
+            }
+
             StringBuilder sb = new StringBuilder(@"INSERT INTO dbo.KeyPhrase (name)
 			                                       SELECT * FROM (VALUES @values) as T(name)
 			                                       EXCEPT
