@@ -51,11 +51,11 @@ namespace serverMedIA
 
             log.Info("Function app working >>");
 
-            SearchNews();
+            //SearchNews();
 
-            //ExtractOpinionsFromNews();
+            ExtractOpinionsFromNews();
 
-            //ExtractKeyPhrasesFromNews();
+            ExtractKeyPhrasesFromNews();
 
             //SearchVideos();
         }
@@ -1089,8 +1089,9 @@ namespace serverMedIA
         {
             List<MultiLanguageInput> documents = new List<MultiLanguageInput>(MAX_NUMBER_OPINION);
 
-            StringBuilder queryDescNews = new StringBuilder(@"IF @MAX_NUMBER_OPINION <= (SELECT COUNT(id) FROM News.News WHERE idOpinion IS NULL) 
-                                                                SELECT TOP @MAX_NUMBER_OPINION id, description FROM News.News WHERE idOpinion IS NULL");
+            //StringBuilder queryDescNews = new StringBuilder(@"IF @MAX_NUMBER_OPINION <= (SELECT COUNT(id) FROM News.News WHERE idOpinion IS NULL) 
+            //                                                    SELECT TOP @MAX_NUMBER_OPINION id, description FROM News.News WHERE idOpinion IS NULL");
+            StringBuilder queryDescNews = new StringBuilder(@"SELECT TOP 1000 id, description FROM News.News WHERE idOpinion IS NULL");
             queryDescNews.Replace("@MAX_NUMBER_OPINION", MAX_NUMBER_OPINION.ToString());
 
             try
@@ -1301,12 +1302,15 @@ namespace serverMedIA
         {
             List<MultiLanguageInput> documents = new List<MultiLanguageInput>(MAX_NUMBER_KEY_PHRASE);
 
-            StringBuilder queryDescNews = new StringBuilder(@"IF @MAX_NUMBER_KEY_PHRASE <= (
-                                                            SELECT COUNT(N.id) FROM News.News AS N 
-                                                            LEFT JOIN News.News_KeyPhrase AS NK ON N.id = NK.idNews
-                                                            WHERE NK.idKeyPhrase IS NULL) 
+            //StringBuilder queryDescNews = new StringBuilder(@"IF @MAX_NUMBER_KEY_PHRASE <= (
+            //                                                SELECT COUNT(N.id) FROM News.News AS N 
+            //                                                LEFT JOIN News.News_KeyPhrase AS NK ON N.id = NK.idNews
+            //                                                WHERE NK.idKeyPhrase IS NULL) 
 
-	                                                            SELECT TOP @MAX_NUMBER_KEY_PHRASE N.id, N.description FROM News.News AS N 
+            //                                                 SELECT TOP @MAX_NUMBER_KEY_PHRASE N.id, N.description FROM News.News AS N 
+            //                                                 LEFT JOIN News.News_KeyPhrase AS NK ON N.id = NK.idNews
+            //                                                 WHERE NK.idKeyPhrase IS NULL");
+            StringBuilder queryDescNews = new StringBuilder(@"SELECT TOP 1000 N.id, N.description FROM News.News AS N 
 	                                                            LEFT JOIN News.News_KeyPhrase AS NK ON N.id = NK.idNews
 	                                                            WHERE NK.idKeyPhrase IS NULL");
 

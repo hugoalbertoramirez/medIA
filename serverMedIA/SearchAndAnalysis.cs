@@ -41,7 +41,7 @@ namespace serverMedIA
         public static TraceWriter log;
 
         [FunctionName("SearchAndAnalysis")] // 0 0 0/2 * * *
-        public static void Run([TimerTrigger("0 0 0/2 * * *")]TimerInfo myTimer, TraceWriter _log)
+        public static void Run([TimerTrigger("* * * * * *")]TimerInfo myTimer, TraceWriter _log)
         {
             log = _log;
 
@@ -947,7 +947,8 @@ namespace serverMedIA
 
         public static string BingNewsSearch(string searchQuery)
         {
-            var uriQuery = URI_API_NEWS_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX" + "&freshness=Week" + "&sortBy=Date";
+            //var uriQuery = URI_API_NEWS_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX" + "&freshness=Week" + "&sortBy=Date";
+            var uriQuery = URI_API_NEWS_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&freshness=Week" + "&sortBy=Date";
 
             WebRequest request = HttpWebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;
@@ -959,7 +960,8 @@ namespace serverMedIA
 
         public static string BingVideoSearch(string searchQuery)
         {
-            var uriQuery = URI_API_VIDEOSEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_VIDEOS + "&mkt=es-MX" + "&freshness=Day" + "&sortBy=Date";
+            //var uriQuery = URI_API_VIDEOSEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_VIDEOS + "&mkt=es-MX" + "&freshness=Day" + "&sortBy=Date";
+            var uriQuery = URI_API_VIDEOSEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_VIDEOS + "&freshness=Day" + "&sortBy=Date";
 
             WebRequest request = HttpWebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;
@@ -971,7 +973,8 @@ namespace serverMedIA
 
         public static string BingSearch(string searchQuery)
         {
-            var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&sortBy=Date"; 
+            //var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&sortBy=Date";
+            var uriQuery = URI_API_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&sortBy=Date";
 
             WebRequest request = HttpWebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;

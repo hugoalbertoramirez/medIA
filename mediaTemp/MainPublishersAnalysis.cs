@@ -18,17 +18,15 @@ using Microsoft.Azure.CognitiveServices.Language.TextAnalytics.Models;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.Configuration;
-using System.Threading;
 
 namespace serverMedIA
 {
     public static class MainPublishersAnalysis
     {
-        public static string SQLDB_CONNECTION = ConfigurationManager.ConnectionStrings["SQLDB_CONNECTION_PROD"].ConnectionString;
-
         public static string API_SEARCH_KEY = ConfigurationManager.ConnectionStrings["API_SEARCH_KEY"].ConnectionString;
         public static string URI_API_NEWS_SEARCH_KEY = ConfigurationManager.ConnectionStrings["URI_API_NEWS_SEARCH_KEY"].ConnectionString;
         public static int MAX_NUMBER_NEWS = Int32.Parse(ConfigurationManager.ConnectionStrings["MAX_NUMBER_NEWS"].ConnectionString);
+        public static string SQLDB_CONNECTION = ConfigurationManager.ConnectionStrings["SQLDB_CONNECTION_PROD"].ConnectionString;
         public static string API_TEXT_ANALITICS_KEY = ConfigurationManager.ConnectionStrings["API_TEXT_ANALITICS_KEY"].ConnectionString;
         public static string URI_API_TEXT_ANALITICS = ConfigurationManager.ConnectionStrings["URI_API_TEXT_ANALITICS"].ConnectionString;
         public static int MAX_NUMBER_OPINION = Int32.Parse(ConfigurationManager.ConnectionStrings["MAX_NUMBER_OPINION"].ConnectionString);
@@ -42,10 +40,8 @@ namespace serverMedIA
         public static SqlTransaction transaction;
         public static TraceWriter log;
 
-        // 0 0 0 1/1 * *
         [FunctionName("MainPublishersAnalysis")] // 0 0 0/2 * * *
-
-        public static void Run([TimerTrigger("* * * * * *")]TimerInfo myTimer, TraceWriter _log)
+        public static void Run([TimerTrigger("0 0 0/2 * * *")]TimerInfo myTimer, TraceWriter _log)
         {
             log = _log;
 
@@ -138,7 +134,6 @@ namespace serverMedIA
                     term = row.Item3;
 
                     json = JObject.Parse(BingNewsSearch(term));
-                    //Thread.Sleep(1000);
 
                     log.Info(term);
 
@@ -200,7 +195,7 @@ namespace serverMedIA
 
             try
             {
-                termsToSearch = GetDataTable(Query("SELECT id, term FROM TermToSearch WHERE status = 1"));
+                termsToSearch = GetDataTable(Query("SELECT id, term FROM TermToSearch WHERE status = 1 and id in (46, 47, 48)"));
             }
             catch (Exception e)
             {
@@ -996,7 +991,7 @@ namespace serverMedIA
         public static string BingNewsSearch(string searchQuery)
         {
             //"&freshness=Day" +
-            var uriQuery = URI_API_NEWS_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&sortBy=Date"; // "&mkt=es-MX"
+            var uriQuery = URI_API_NEWS_SEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_NEWS + "&mkt=es-MX" + "&sortBy=Date";
 
             WebRequest request = HttpWebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;
@@ -1008,7 +1003,7 @@ namespace serverMedIA
 
         public static string BingVideoSearch(string searchQuery)
         {
-            var uriQuery = URI_API_VIDEOSEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_VIDEOS + "&freshness=Day" + "&sortBy=Date"; // "&mkt=es-MX"
+            var uriQuery = URI_API_VIDEOSEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_VIDEOS + "&mkt=es-MX" + "&freshness=Day" + "&sortBy=Date";
 
             WebRequest request = HttpWebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;
@@ -1079,7 +1074,7 @@ namespace serverMedIA
 
                 }
 
-                //GageOpinions();
+                GageOpinions();
             }
 
             CloseConnection();
