@@ -45,7 +45,7 @@ namespace serverMedIA
         // 0 0 0 1/1 * *
         [FunctionName("MainPublishersAnalysis")] // 0 0 0/2 * * *
 
-        public static void Run([TimerTrigger("* * * * * *")]TimerInfo myTimer, TraceWriter _log)
+        public static void Run([TimerTrigger("0 0 0 1/1 * *")]TimerInfo myTimer, TraceWriter _log)
         {
             log = _log;
 
