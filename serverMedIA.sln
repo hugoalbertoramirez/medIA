@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "serverMedIA", "serverMedIA\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "serverMedIAMP", "serverMedIAMP\serverMedIAMP.csproj", "{67090356-848D-47BE-A055-3A178641A04A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mediaTemp", "mediaTemp\mediaTemp.csproj", "{EC704416-2802-4907-8DE2-45E2EFC515A6}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "serverMedIAMP2", "serverMedIAMP2\serverMedIAMP2.csproj", "{126F2B77-46BA-40C8-AB74-8CF47F01D237}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,14 +21,6 @@ Global
 		{67090356-848D-47BE-A055-3A178641A04A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67090356-848D-47BE-A055-3A178641A04A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67090356-848D-47BE-A055-3A178641A04A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC704416-2802-4907-8DE2-45E2EFC515A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC704416-2802-4907-8DE2-45E2EFC515A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC704416-2802-4907-8DE2-45E2EFC515A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC704416-2802-4907-8DE2-45E2EFC515A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{126F2B77-46BA-40C8-AB74-8CF47F01D237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{126F2B77-46BA-40C8-AB74-8CF47F01D237}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{126F2B77-46BA-40C8-AB74-8CF47F01D237}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{126F2B77-46BA-40C8-AB74-8CF47F01D237}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

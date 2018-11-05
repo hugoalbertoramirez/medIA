@@ -43,9 +43,8 @@ namespace serverMedIA
         public static TraceWriter log;
 
         // 0 0 0 1/1 * *
-        [FunctionName("MainPublishersAnalysis")] // 0 0 0/2 * * *
-
-        public static void Run([TimerTrigger("0 0 0 1/1 * *")]TimerInfo myTimer, TraceWriter _log)
+        [FunctionName("MainPublishersAnalysis")] 
+        public static void Run([TimerTrigger("0 0 0/2 1/1 * *")]TimerInfo myTimer, TraceWriter _log)
         {
             log = _log;
 
@@ -376,7 +375,6 @@ namespace serverMedIA
                 {
                     idTerm = int.Parse(rowTerm.ItemArray[0].ToString());
                     term = rowTerm.ItemArray[1].ToString();
-
                     queries.Add(new Tuple<int, int, string>(idPublisher, idTerm, term + " " + "(site:" + url + ")"));
                 }
             }
@@ -1008,7 +1006,7 @@ namespace serverMedIA
 
         public static string BingVideoSearch(string searchQuery)
         {
-            var uriQuery = URI_API_VIDEOSEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_VIDEOS + "&freshness=Day" + "&sortBy=Date"; // "&mkt=es-MX"
+            var uriQuery = URI_API_VIDEOSEARCH_KEY + "?q=" + Uri.EscapeDataString(searchQuery) + "&count=" + MAX_NUMBER_VIDEOS + "&sortBy=Date"; // "&mkt=es-MX" + "&freshness=Day"
 
             WebRequest request = HttpWebRequest.Create(uriQuery);
             request.Headers["Ocp-Apim-Subscription-Key"] = API_SEARCH_KEY;
