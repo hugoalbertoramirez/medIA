@@ -1,0 +1,28 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "********",
+    "AzureWebJobsDashboard": "********"
+  },
+
+  "ConnectionStrings": {
+    "SQLDB_CONNECTION_DEV": "********",
+    "SQLDB_CONNECTION_PRU": "********",
+    "SQLDB_CONNECTION_PROD": "********",
+
+    "URI_API_NEWS_SEARCH_KEY": "https://api.cognitive.microsoft.com/bing/v7.0/news/search",
+    "URI_API_TEXT_ANALITICS": "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0",
+    "URI_API_VIDEOSEARCH_KEY": "https://api.cognitive.microsoft.com/bing/v7.0/videos/search",
+    "URI_API_SEARCH_KEY": "https://api.cognitive.microsoft.com/bing/v7.0/search",
+
+    "API_SEARCH_KEY": "********",
+    "MAX_NUMBER_NEWS": "100",
+    "MAX_NUMBER_VIDEOS": "20",
+
+    "API_TEXT_ANALITICS_KEY": "********",
+    "LANGUAGE_TEXT_ANALITICS": "es",
+    "MAX_NUMBER_OPINION": "200",
+    "MAX_NUMBER_KEY_PHRASE": "100"
+
+  }
+}
